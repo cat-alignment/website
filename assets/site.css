@@ -1,0 +1,373 @@
+/* Cambridge Alignment Theory */
+
+/* One typeface at one weight. Hierarchy comes from size and from two tones of
+   the same ink. One surface colour (ice) on white. Space separates sections;
+   there are no rules except a hairline above the footer. */
+
+:root {
+  --white: #ffffff;
+  --ice: #bde3f5;
+  --ink: #0a2540;
+  --ink-soft: rgba(10, 37, 64, 0.68);
+  --hair: rgba(10, 37, 64, 0.14);
+
+  --sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, monospace;
+
+  --wrap: 64rem;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --side: 18rem;
+  --gap: 3rem;
+  --logo: 2.75rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+  font-weight: 400;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--white);
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+
+a:hover {
+  color: var(--ink);
+  background-color: var(--ice);
+}
+
+.band a:hover {
+  background-color: var(--white);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--wrap));
+  margin-inline: auto;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.skip {
+  position: absolute;
+  left: var(--gutter);
+  top: -4rem;
+  z-index: 3;
+  padding: 0.4rem 0.7rem;
+  background: var(--ink);
+  color: var(--white);
+}
+
+.skip:focus {
+  top: 0.5rem;
+}
+
+/* Header. Every page puts an ice band directly under it. The letters stand on
+   the band's top edge and the cat sits on it beside them, a little shorter
+   than the letters, with its tail hanging down over the ice. */
+
+.site-header {
+  position: relative;
+  z-index: 2;
+  background: var(--white);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  height: calc(var(--logo) * 1.7);
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  text-decoration: none;
+}
+
+.logo:hover {
+  background-color: transparent;
+}
+
+.logo__word {
+  font-size: var(--logo);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  /* Take the descender space out of the layout so the box ends on the baseline. */
+  margin-bottom: -1em;
+}
+
+/* 62% of the image is cat, the rest is tail. Pulling the bottom margin up by
+   the tail's share puts the cat's seat on the same baseline as the letters.
+   At this height the cat's ears stop below the top of the capitals. */
+.logo__cat {
+  font-size: 0;
+  line-height: 0;
+}
+
+.logo__cat img {
+  height: calc(var(--logo) * 0.98);
+  width: auto;
+  margin-bottom: calc(var(--logo) * 0.98 * -0.38);
+  margin-left: calc(var(--logo) * 0.05);
+}
+
+.nav {
+  display: flex;
+  gap: 1.75rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+.nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.nav a:hover {
+  color: var(--ink);
+  background-color: transparent;
+}
+
+.nav a[aria-current="page"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.4em;
+}
+
+/* Ice band: opens every page with its title. */
+
+.band {
+  background: var(--ice);
+}
+
+.band__inner {
+  padding-block: clamp(3.5rem, 9vw, 6.5rem) clamp(2.5rem, 6vw, 4rem);
+}
+
+.band--split .band__inner {
+  display: grid;
+  grid-template-columns: minmax(0, var(--side)) minmax(0, 1fr);
+  gap: 1rem var(--gap);
+  align-items: baseline;
+}
+
+.display {
+  font-size: clamp(2.25rem, 1.3rem + 3.6vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.lede {
+  max-width: 32rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.display + .lede {
+  margin-top: 1.5rem;
+}
+
+/* Rows: a heading or details on the left, text on the right. */
+
+.rows {
+  padding-block: clamp(3rem, 8vw, 5.5rem);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, var(--side)) minmax(0, 1fr);
+  gap: 0.75rem var(--gap);
+  align-items: baseline;
+}
+
+.row + .row {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+.row__head {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.row__body {
+  max-width: 32rem;
+  color: var(--ink-soft);
+}
+
+.row__body p + p {
+  margin-top: 1rem;
+}
+
+.row__title {
+  max-width: 18ch;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.row__body .row__sub {
+  margin-top: 0.9rem;
+  font-size: 1.125rem;
+  color: var(--ink);
+}
+
+.row__body .row__sub + p {
+  margin-top: 0.4rem;
+}
+
+.meta {
+  color: var(--ink-soft);
+}
+
+.meta p + p {
+  margin-top: 0.9rem;
+}
+
+.meta time {
+  color: var(--ink);
+}
+
+/* People */
+
+.people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-block: 0;
+  padding: clamp(3rem, 8vw, 5.5rem) 0;
+  list-style: none;
+}
+
+.person {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.person__tile {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--ice);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.person__name {
+  font-size: 1.125rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.person__role {
+  margin-top: 0.15rem;
+  color: var(--ink-soft);
+}
+
+.person__bio {
+  margin-top: 0.5rem;
+  color: var(--ink-soft);
+}
+
+/* Footer */
+
+.site-footer {
+  border-top: 1px solid var(--hair);
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-block: 1.5rem 2rem;
+}
+
+.site-footer__name {
+  color: var(--ink);
+}
+
+/* Narrow screens */
+
+@media (max-width: 46rem) {
+  :root {
+    --logo: 2.25rem;
+  }
+
+  .band--split .band__inner,
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .people {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.25rem;
+  }
+
+  .nav {
+    gap: 1.1rem;
+    margin-bottom: 0.55rem;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .nav {
+    gap: 0.8rem;
+  }
+}

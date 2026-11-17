@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11 -1 66 66">
+  <!-- The cat from cat.svg without its hanging tail, on an ice-blue square. -->
+  <rect x="-11" y="-1" width="66" height="66" fill="#bde3f5"/>
+  <g transform="translate(44 0) scale(-1 1)">
+    <path fill="#0b0b0d" stroke="#0b0b0d" stroke-width="1" stroke-linejoin="round" d="M13 62C8 62 5.5 57.5 6 52C6.6 44 10.5 37 14.5 30.5C15.8 28.4 16.6 26.4 16.9 24.6C15 22.4 14.2 18.8 14.8 15.4C15 14 15.4 12.8 15.9 11.8L15.6 2.6L21.8 7.2C23.2 6.8 25 6.8 26.4 7.2L31.6 2.4L32.4 10.8C33.4 12.6 33.9 14.8 33.6 16.8C33.3 19.6 31.8 22 29.4 23.6C31.6 27 33.6 32 34.6 38C35.6 44.5 36 50 35.8 55C35.8 59.5 34 62 31 62Z"/>
+  </g>
+  <rect x="-11" y="62" width="66" height="3" fill="#0b0b0d"/>
+</svg>
