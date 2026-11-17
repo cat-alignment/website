@@ -1,8 +1,8 @@
 /* Cambridge Alignment Theory */
 
 /* One typeface at one weight. Hierarchy comes from size and from two tones of
-   the same ink. One surface colour (ice) on white. Space separates sections;
-   there are no rules except a hairline above the footer. */
+   the same ink. White pages with ice blue as the accent: an ice line that
+   fades out at both ends closes the header and the opening of each page. */
 
 :root {
   --white: #ffffff;
@@ -19,6 +19,8 @@
   --side: 18rem;
   --gap: 3rem;
   --logo: 2.75rem;
+  /* How far each end of an ice line takes to fade out. */
+  --fade: clamp(1.5rem, 10vw, 8rem);
 }
 
 *,
@@ -74,10 +76,6 @@ a:hover {
   background-color: var(--ice);
 }
 
-.band a:hover {
-  background-color: var(--white);
-}
-
 :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
@@ -108,14 +106,34 @@ a:hover {
   top: 0.5rem;
 }
 
-/* Header. Every page puts an ice band directly under it. The letters stand on
-   the band's top edge and the cat sits on it beside them, a little shorter
-   than the letters, with its tail hanging down over the ice. */
+/* Ice line. It runs a little past the text column on both sides and fades
+   to nothing at its ends. */
+
+.site-header::after,
+.rule {
+  display: block;
+  width: min(100%, calc(var(--wrap) + 16rem));
+  height: 2px;
+  margin: 0 auto;
+  border: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--ice) var(--fade),
+    var(--ice) calc(100% - var(--fade)),
+    transparent
+  );
+}
+
+/* Header. The letters and the cat share a baseline that floats above the ice
+   line, high enough for the tail to hang clear of it. */
 
 .site-header {
-  position: relative;
-  z-index: 2;
   background: var(--white);
+}
+
+.site-header::after {
+  content: "";
 }
 
 .site-header__inner {
@@ -123,7 +141,8 @@ a:hover {
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  height: calc(var(--logo) * 1.7);
+  height: calc(var(--logo) * 2.2);
+  padding-bottom: calc(var(--logo) * 0.5);
 }
 
 .logo {
@@ -183,21 +202,30 @@ a:hover {
   text-underline-offset: 0.4em;
 }
 
-/* Ice band: opens every page with its title. */
+/* Home opening: name and introduction on the left, the CMS on the right. */
 
-.band {
-  background: var(--ice);
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 2rem var(--gap);
+  align-items: center;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
 }
 
-.band__inner {
-  padding-block: clamp(3.5rem, 9vw, 6.5rem) clamp(2.5rem, 6vw, 4rem);
+.hero__art {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.band--split .band__inner {
+/* Opening of the other pages: title on the left, one line on the right. */
+
+.page-head {
   display: grid;
   grid-template-columns: minmax(0, var(--side)) minmax(0, 1fr);
   gap: 1rem var(--gap);
   align-items: baseline;
+  padding-block: clamp(3rem, 8vw, 5rem) clamp(2.25rem, 6vw, 3.5rem);
 }
 
 .display {
@@ -350,7 +378,8 @@ a:hover {
     --logo: 2.25rem;
   }
 
-  .band--split .band__inner,
+  .hero,
+  .page-head,
   .row {
     grid-template-columns: minmax(0, 1fr);
   }

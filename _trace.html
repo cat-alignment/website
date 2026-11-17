@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>trace lab (temporary)</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
+  svg { width: 100vw; height: 100vh; display: block; }
+  .grid line { stroke: #ff00aa; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: 0.55; }
+  .grid line.minor { opacity: 0.22; }
+  .over #art .a, .over #art .b, .over #art .c { stroke: #ff2200; stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+  .over #art .b, .over #art .c { stroke: #00c8ff; }
+  .over #art .w { fill: none; }
+  .grid text { fill: #d4007f; font: 600 11px/1 ui-monospace, Menlo, monospace; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+</style>
+<svg id="s" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+  const q = new URLSearchParams(location.search);
+  const num = (k, d) => (q.has(k) ? +q.get(k) : d);
+  const X = num('x', 0), Y = num('y', 0), W = num('w', 1920), H = num('h', 1280);
+  const showPhoto = num('photo', 1), showGrid = num('grid', 1), showArt = num('art', 0);
+  const step = num('step', 50);
+  const s = document.getElementById('s');
+  s.setAttribute('viewBox', [X, Y, W, H].join(' '));
+  if (showPhoto && showArt) s.classList.add('over');
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (p || s).appendChild(e); return e; };
+  const PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/CMS_Central_Core_01.jpg/1920px-CMS_Central_Core_01.jpg';
+  const ready = [];
+  if (showPhoto) {
+    const im = el('image', { href: PHOTO, x: 0, y: 0, width: 1920, height: 1280, opacity: num('po', 1) });
+    ready.push(new Promise(r => { im.addEventListener('load', r); im.addEventListener('error', r); }));
+  }
+  if (showArt) {
+    ready.push(fetch('/assets/cms.svg?' + Date.now()).then(r => r.text()).then(t => {
+      const doc = new DOMParser().parseFromString(t, 'image/svg+xml');
+      const g = el('g', { id: 'art' });
+      for (const n of [...doc.documentElement.childNodes]) g.appendChild(document.importNode(n, true));
+    }));
+  }
+  Promise.all(ready).then(() => {
+    if (showGrid) {
+      const g = el('g', { class: 'grid' });
+      const k = W / innerWidth * (innerWidth / innerHeight > W / H ? (innerWidth / innerHeight) / (W / H) : 1);
+      const fs = 11 * Math.max(W / innerWidth, H / innerHeight);
+      for (let x = Math.ceil(X / step) * step; x <= X + W; x += step) {
+        const major = x % 100 === 0;
+        el('line', { x1: x, y1: Y, x2: x, y2: Y + H, class: major ? '' : 'minor' }, g);
+        if (major) { const t = el('text', { x: x + 2 * fs / 11, y: Y + fs * 1.1, 'font-size': fs }, g); t.textContent = x; t.style.fontSize = fs + 'px'; }
+      }
+      for (let y = Math.ceil(Y / step) * step; y <= Y + H; y += step) {
+        const major = y % 100 === 0;
+        el('line', { x1: X, y1: y, x2: X + W, y2: y, class: major ? '' : 'minor' }, g);
+        if (major) { const t = el('text', { x: X + 2 * fs / 11, y: y - 2 * fs / 11, 'font-size': fs }, g); t.textContent = y; t.style.fontSize = fs + 'px'; }
+      }
+    }
+    document.title = 'ready';
+  });
+</script>
