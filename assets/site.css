@@ -218,6 +218,15 @@ a:hover {
   height: auto;
 }
 
+/* On wide screens the drawing runs out past the text column on the right,
+   where its lines are already fading. */
+@media (min-width: 72rem) {
+  .hero__art {
+    width: calc(100% + min(9rem, (100vw - var(--wrap)) / 2 - 1rem));
+    max-width: none;
+  }
+}
+
 /* Opening of the other pages: title on the left, one line on the right. */
 
 .page-head {
@@ -369,6 +378,10 @@ a:hover {
 
 .site-footer__name {
   color: var(--ink);
+}
+
+.site-footer__credit {
+  flex-basis: 100%;
 }
 
 /* Narrow screens */

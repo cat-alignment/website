@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""Temporary generator for assets/cms.svg (line drawing of the CMS).
+"""Writes assets/cms.svg, the line drawing of the CMS on the home page.
 
-Coordinates are in the pixel space of the 1920 x 1280 reference photo.
-Delete this file once the drawing is finished.
+The site itself has no build step: the SVG is checked in, and this script is
+only needed to change the drawing. Run it from the repository root:
+
+    python3 tools/draw_cms.py
+
+Coordinates are in the pixel space of the reference photograph the drawing is
+traced from (1920 x 1280): "CMS Central Core 01.jpg" by Dmitry Tonkonog,
+https://commons.wikimedia.org/wiki/File:CMS_Central_Core_01.jpg, CC BY-SA 3.0.
 """
 
-INK = "#2a6592"
+INK = "#255d8a"
 out = []
 
 
@@ -99,8 +105,8 @@ def lantern(cx, cap_y, cap_rx, cap_ry, d2_y, d2_rx, d2_ry, cone_top, cone_top_hw
 # Outer (upper) edge of the big curved roof, left to right.
 T = [(457.8, 478), (490.3, 445.5), (529.2, 419.5), (574.7, 400), (620, 387), (694, 377), (772.5, 376),
      (850.6, 380.5), (900, 388), (962, 396), (1024, 410), (1086, 427), (1148, 444),
-     (1210, 462), (1272, 481), (1320, 496), (1362, 511), (1424, 536), (1486, 557),
-     (1548, 580), (1610, 602), (1672, 619), (1718, 629), (1772, 639), (1825, 646),
+     (1210, 462), (1272, 481), (1320, 495), (1362, 508), (1424, 532), (1486, 553.5),
+     (1548, 577), (1610, 602), (1672, 619), (1718, 629), (1772, 639), (1825, 646),
      (1878, 650.5), (1920, 652.5)]
 # Lower edge of the roof band, left to right.
 B = [(490, 621), (529.7, 562), (566, 518), (600.6, 492), (647.5, 469), (700, 455),
@@ -313,12 +319,15 @@ path("M440 1001L820 1122", "b")
 
 # ---------------------------------------------------------------- write
 svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 120 1920 1000" width="1920" height="1000">
-  <!-- The Centre for Mathematical Sciences, Cambridge, seen from in front and to the right. -->
+  <!-- The Centre for Mathematical Sciences, Cambridge, seen from in front and to the right.
+       Traced by hand from the photograph "CMS Central Core 01.jpg" by Dmitry Tonkonog,
+       https://commons.wikimedia.org/wiki/File:CMS_Central_Core_01.jpg, licensed CC BY-SA 3.0.
+       As a derivative of that photograph this drawing is under the same licence. -->
   <style>
     .a, .b, .c {{ fill: none; stroke: {INK}; stroke-linecap: round; stroke-linejoin: round; }}
-    .a {{ stroke-width: 4; }}
-    .b {{ stroke-width: 2.8; }}
-    .c {{ stroke-width: 2; }}
+    .a {{ stroke-width: 4.6; }}
+    .b {{ stroke-width: 3.2; }}
+    .c {{ stroke-width: 2.3; }}
     .w {{ fill: #fff; }}
   </style>
   <defs>

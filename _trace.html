@@ -23,11 +23,11 @@
   if (showPhoto && showArt) s.classList.add('over');
   const NS = 'http://www.w3.org/2000/svg';
   const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (p || s).appendChild(e); return e; };
-  const PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/CMS_Central_Core_01.jpg/1920px-CMS_Central_Core_01.jpg';
+  const PHOTO = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/CMS_Central_Core_01.jpg/' + (q.get('res') || '1920') + 'px-CMS_Central_Core_01.jpg';
   const ready = [];
   if (showPhoto) {
     const im = el('image', { href: PHOTO, x: 0, y: 0, width: 1920, height: 1280, opacity: num('po', 1) });
-    ready.push(new Promise(r => { im.addEventListener('load', r); im.addEventListener('error', r); }));
+    ready.push(new Promise(r => { im.addEventListener('load', () => { window.photoOk = true; r(); }); im.addEventListener('error', () => { window.photoOk = false; r(); }); }));
   }
   if (showArt) {
     ready.push(fetch('/assets/cms.svg?' + Date.now()).then(r => r.text()).then(t => {
