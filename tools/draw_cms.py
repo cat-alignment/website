@@ -70,6 +70,11 @@ def group(name):
     out.append(f"<!-- {name} -->")
 
 
+def segs_d(segs):
+    """One path for many separate segments (or polylines)."""
+    return "".join("M" + " L".join(f"{f(x)} {f(y)}" for x, y in s) for s in segs)
+
+
 def lantern(cx, cap_y, cap_rx, cap_ry, d2_y, d2_rx, d2_ry, cone_top, cone_top_hw, cone_base, cone_base_hw, cls, flue=None, n_mull=3, tilt=(0, 0)):
     """Glass cone lantern with two discs on top. tilt turns the cap and the lower disc (degrees)."""
     # cone
@@ -163,6 +168,194 @@ def s_bot(x):
     return at(S_BOT, x)
 
 
+# ---------------------------------------------------------------- ground (generated)
+#
+# The paving in front of the building is generated rather than traced: slab
+# joints are laid out on a plan grid and projected into the photo with the
+# vanishing points of the real ground lines. All of them sit on the horizon,
+# about y = 582 in the photo:
+#   drain channel along the lawns        -> (-1000, 582)
+#   cobble edges of the diagonal path    -> (2120, 582)
+#   cobble steps in front of the doors   -> (-1478, 582), across them (1950, 582)
+# The whole ground layer then fades out towards the lower left, where the path
+# runs off towards the text beside the drawing.
+
+import random
+
+rng = random.Random(7)
+defs = []
+HZ = 582
+
+
+def proj(O, VA, VB, a, b):
+    """Plan (u, v) -> photo, for a ground grid whose u and v lines run to VA and VB.
+    a and b set the size of one plan unit at the origin O (negative runs away from the VP).
+    p.inv maps a photo point back to (u, v); p.span(poly) is the plan box covering poly."""
+    def p(u, v):
+        w = 1 + a * u + b * v
+        return ((O[0] + a * u * VA[0] + b * v * VB[0]) / w, (O[1] + a * u * VA[1] + b * v * VB[1]) / w)
+
+    def inv(pt):
+        x, y = pt
+        m11, m12, r1 = a * (x - VA[0]), b * (x - VB[0]), O[0] - x
+        m21, m22, r2 = a * (y - VA[1]), b * (y - VB[1]), O[1] - y
+        det = m11 * m22 - m12 * m21
+        return ((r1 * m22 - m12 * r2) / det, (m11 * r2 - r1 * m21) / det)
+
+    def span(poly):
+        uv = [inv(q) for q in poly]
+        return (min(q[0] for q in uv), max(q[0] for q in uv), min(q[1] for q in uv), max(q[1] for q in uv))
+    p.inv, p.span = inv, span
+    return p
+
+
+def inside(poly, pt):
+    x, y = pt
+    c = False
+    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + poly[:1]):
+        if (y0 > y) != (y1 > y) and x < x0 + (y - y0) * (x1 - x0) / (y1 - y0):
+            c = not c
+    return c
+
+
+def clip(poly, a, b):
+    """The parts of segment a-b that lie inside poly."""
+    (ax, ay), (bx, by) = a, b
+    dx, dy = bx - ax, by - ay
+    ts = [0.0, 1.0]
+    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + poly[:1]):
+        ex, ey = x1 - x0, y1 - y0
+        den = dx * ey - dy * ex
+        if abs(den) < 1e-12:
+            continue
+        t = ((x0 - ax) * ey - (y0 - ay) * ex) / den
+        s = ((x0 - ax) * dy - (y0 - ay) * dx) / den
+        if 0 < t < 1 and 0 <= s <= 1:
+            ts.append(t)
+    ts.sort()
+    res = []
+    for t0, t1 in zip(ts, ts[1:]):
+        tm = (t0 + t1) / 2
+        if t1 - t0 > 1e-6 and inside(poly, (ax + dx * tm, ay + dy * tm)):
+            res.append([(ax + dx * t0, ay + dy * t0), (ax + dx * t1, ay + dy * t1)])
+    return res
+
+
+def line_y(p, q, x):
+    return p[1] + (q[1] - p[1]) * (x - p[0]) / (q[0] - p[0])
+
+
+def toward(pt, vp, x):
+    """y at x on the line from pt to the vanishing point vp."""
+    return line_y(pt, vp, x)
+
+
+VA, VB = (-1000, HZ), (2120, HZ)      # plaza and path
+VS, VSX = (-1478, HZ), (1950, HZ)     # cobble steps
+
+
+def drain(x):
+    return 872 + 0.2907 * x
+
+
+def meet_drain(pt, vp):
+    """Where the line from pt to vp crosses the drain."""
+    k = (vp[1] - pt[1]) / (vp[0] - pt[0])
+    x = (pt[1] - k * pt[0] - 872) / (0.2907 - k)
+    return (x, drain(x))
+
+
+# Edges of the two cobble strips that line the diagonal path (at the left edge of the photo).
+S1_TOP, S1_BOT, S2_TOP, S2_BOT = (0, 1030), (0, 1046), (0, 1122), (0, 1138)
+s1_end = meet_drain(S1_BOT, VB)
+s2_end = meet_drain(S2_TOP, VB)
+
+# Cobble steps: left edge of the stepped area, and the near edge of its lowest band.
+STEP_TOP, STEP_BOT = (840, 869.5), (552, 968)
+# Edge of the cobbled circle round the right drum, from the drum down past the frame.
+CIRCLE_EDGE = [(1300, 962), (1312, 985), (1305, 1010), (1280, 1035), (1240, 1060), (1195, 1090),
+               (1160, 1125), (1130, 1165)]
+step_bot_end = (1195, toward(STEP_BOT, VS, 1195))
+
+PLAZA = ([(-10, 828), (150, 852), (300, 826), (420, 800), (480, 801), (530, 800), (600, 794),
+          (646.5, 833), (701, 845), (761, 857), (831, 868), STEP_TOP, STEP_BOT, step_bot_end]
+         + CIRCLE_EDGE[-2:] + [(1150, drain(1150)), s2_end, (-10, toward(S2_TOP, VB, -10)),
+                                (-10, toward(S1_BOT, VB, -10)), s1_end, (-10, drain(-10))])
+STEPS = ([STEP_TOP, (910, 877), (997, 890), (1107, 892), (1226, 894), (1240, 935)]
+         + CIRCLE_EDGE[:-2] + [STEP_BOT])
+CIRCLE = ([(1226, 894), (1240, 935)] + CIRCLE_EDGE + [(1920, 1165), (1920, 956), (1668, 952), (1668, 894)])
+
+out.append('<g mask="url(#ground)">')
+group("ground: plaza and path paving")
+# Sandstone slabs of mixed lengths, laid in courses that run with the path
+# (the long joints in the photo do too). One plan unit is one course wide; a
+# few of the short joints are left out so it reads as drawn, not ruled.
+P = proj(s1_end, VA, VB, -0.0205, 0.0157)
+u0, u1, v0, v1 = P.span(PLAZA)
+joints, courses = [], []
+for u in range(int(u0) - 1, int(u1) + 2):
+    courses += clip(PLAZA, P(u, v0 - 1), P(u, v1 + 1))
+    v = v0 - rng.random() * 3
+    while v < v1:
+        if rng.random() > 0.15:
+            joints += clip(PLAZA, P(u, v), P(u + 1, v))
+        v += rng.choice((1.5, 2, 2, 2.5, 3))
+path(segs_d(courses), "g")
+path(segs_d(joints), "g")
+
+group("ground: drain channel along the lawns")
+for dy in (0, 5):
+    path(segs_d([[(-10, drain(-10) + dy), (s1_end[0] - 22, drain(s1_end[0] - 22) + dy)],
+                 [(s2_end[0] + 26, drain(s2_end[0] + 26) + dy), (1150, drain(1150) + dy)]]), "c")
+
+group("ground: cobble strips beside the path")
+cob = []
+for top, bot in ((S1_TOP, S1_BOT), (S2_TOP, S2_BOT)):
+    for t in (0.28, 0.72):
+        st = (-10, top[1] + (bot[1] - top[1]) * t)
+        cob.append([st, meet_drain(st, VB)])
+path(segs_d(cob), "k")
+
+group("ground: cobble steps")
+# Six bands of cobbles, one slab deep apart, receding towards the doors. The
+# depth unit is set so the far band lands on the one in the photo, which runs
+# through (815, 882).
+BAND = 0.15
+
+
+def far_band_w():
+    (ox, oy), k = STEP_BOT, (882 - VS[1]) / (815 - VS[0])
+    # p(0, v) = (O + w VSX) / (1 + w) lying on the line VS-(815, 882)
+    return (oy - VS[1] - k * (ox - VS[0])) / (k * (VSX[0] - VS[0]) - (VSX[1] - VS[1]))
+
+
+S = proj(STEP_BOT, VS, VSX, -0.019, far_band_w() / (5 + BAND))
+su0, su1, _, _ = S.span(STEPS)
+bands, joints = [], []
+for k in range(6):
+    v = BAND + k
+    for dv in (-0.12, 0.12):
+        bands += clip(STEPS, S(su0 - 1, v + dv), S(su1 + 1, v + dv))
+    if k < 5:
+        u = su0 - rng.random() * 2
+        while u < su1:
+            joints += clip(STEPS, S(u, v + 0.25), S(u, v + 0.75))
+            u += rng.choice((1.5, 2, 2.5, 3))
+path(segs_d(bands), "k")
+path(segs_d(joints), "g")
+
+group("ground: cobbled circle round the benches")
+defs.append('<clipPath id="circle"><path d="' + pl(CIRCLE, True) + '"/></clipPath>')
+rings = "".join(f'<ellipse class="k" cx="1560" cy="1135" rx="{r}" ry="{f(r * 0.31)}"/>' for r in range(40, 760, 21))
+out.append(f'<g clip-path="url(#circle)">{rings}</g>')
+path("M1897 956L1918 1125M1908 956L1929 1125", "c")
+
+group("ground: bollards")
+for x, top, bot, r in ((298, 888, 968, 10), (1007, 1072, 1185, 12)):
+    path(f"M{x - r} {bot}V{top + r}A{r} {r} 0 0 1 {x + r} {top + r}V{bot}A{r} {r * 0.35} 0 0 1 {x - r} {bot}Z", "c", fill=True)
+    path(f"M{x - r} {top + r + 6}h{2 * r}M{x - r} {top + r + 11}h{2 * r}", "c")
+out.append("</g>")
+
 # ---------------------------------------------------------------- far building (right)
 group("building behind, right")
 # raised storey at the far right
@@ -227,7 +420,10 @@ group("left pavilion: canopy roof")
 # Ridge of the canopy, the near eave, and the underside — drawn as separate
 # strokes so they do not spike through each other at the hip.
 path("M0 453L149 441L266 429L489 441", "a")
-path("M266 429L232.5 477L448 472.5", "a")
+# The near bay is a cross gable: its ridge runs forward to an apex, and the
+# gable's two rakes come down to the fascia on either side.
+path("M266 429L192 454", "a")
+path("M97 475.6L192 454L229 477L448 472.5", "a")
 path("M0 472.5L92 475.6L232.5 477L446 478", "b")
 path("M0 478L92 481L232 482.5L446 478", "c")
 
@@ -315,6 +511,10 @@ for x in (706.9, 753, 803.6, 864.9, 929.8, 1001.5):
 # never pass through the step outline; past the last step they stand on the roof.
 for x in (1241.8, 1279.5, 1332.7, 1362.7, 1422, 1447, 1514.7, 1609.9, 1702.2, 1792.2, 1880.1):
     path(f"M{f(x)} {f(at(rail_b, x))}V{f(min(at(steps, x), at(T, x)) if x < steps[-1][0] else at(T, x))}", "c")
+# The handrail's top end crosses in front of the middle lantern; these two posts
+# hold it up there, and without them the rail reads as a stray stroke.
+for x, foot in ((1076.9, 404), (1157.6, 424)):
+    path(f"M{f(x)} {f(at(rail_b, x))}V{foot}", "c")
 path(sm(rail_a), "b")
 path(sm(rail_b), "b")
 
@@ -354,7 +554,8 @@ for x0, x1 in ((522, 549), (553, 585), (589, 630), (633, 682.6), (690.5, 742.8),
 group("entrance front")
 beam_t = [(560, 662), (980, 707), (1226, 727)]
 beam_b = [(560, 675), (980, 721), (1226, 741)]
-ground = [(646.5, 833), (701, 845), (761, 857), (831, 868), (910, 879), (997, 892), (1107, 878), (1226, 872)]
+# The glazing meets the paving almost level across the doors (it used to kink up here).
+ground = [(646.5, 833), (701, 845), (761, 857), (831, 868), (910, 877), (997, 890), (1107, 892), (1226, 894)]
 path(pl(beam_t) + "M" + pl(beam_b)[1:], "a")
 path(pl(ground), "a")
 for x in (646.5, 701, 761, 831, 910, 997, 1107):
@@ -369,9 +570,12 @@ d_top = [(414, 690), (497, 697), (580, 692)]
 d_bot = [(414, 794), (497, 800), (580, 795)]
 path(sm(d_top) + "M" + sm(d_bot)[1:] + "M414 690V794M580 692V795", "b")
 x = 426
-while x < 575:
+while x < 530:
     path(f"M{x} {f(at(d_top, x))}V{f(at(d_bot, x))}", "c")
     x += 12
+# A door at the right end of the window, with two hopper lights above it.
+path(f"M536 {f(at(d_top, 536))}V{f(at(d_bot, 536))}", "b")
+path("M536 727L580 725.5M536 760L580 758.5", "c")
 path("M389 668V790", "b")
 
 # ---------------------------------------------------------------- right drum
@@ -399,7 +603,7 @@ while x < 1590:
 group("ground")
 path("M1668 950L1920 954", "a")
 path("M600 796L646.5 833", "b")
-# The plaza is left as open ground: loose paving joints read as stray lines.
+# The paving itself is generated at the top of the file, under everything else.
 
 # ---------------------------------------------------------------- write
 svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 120 1920 1000" width="1920" height="1000">
@@ -408,13 +612,29 @@ svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 120 1920 1000" widt
        https://commons.wikimedia.org/wiki/File:CMS_Central_Core_01.jpg, licensed CC BY-SA 3.0.
        As a derivative of that photograph this drawing is under the same licence. -->
   <style>
-    .a, .b, .c {{ fill: none; stroke: {INK}; stroke-linecap: round; stroke-linejoin: round; }}
+    .a, .b, .c, .g {{ fill: none; stroke: {INK}; stroke-linecap: round; stroke-linejoin: round; }}
     .a {{ stroke-width: 4.6; }}
     .b {{ stroke-width: 3.2; }}
     .c {{ stroke-width: 2.3; }}
+    .g {{ stroke-width: 1.9; }}
+    .k {{ fill: none; stroke: {INK}; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0 7; }}
     .w {{ fill: #fff; }}
   </style>
   <defs>
+    {(chr(10) + "    ").join(defs)}
+    <!-- The ground is strongest in front of the doors and fades out towards the
+         lower left, where the path heads off towards the text. -->
+    <radialGradient id="near" gradientUnits="userSpaceOnUse" cx="1180" cy="880" r="1150"
+                    gradientTransform="translate(1180 880) scale(1 0.34) translate(-1180 -880)">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.85"/>
+      <stop offset="0.3" stop-color="#fff" stop-opacity="0.85"/>
+      <stop offset="0.62" stop-color="#fff" stop-opacity="0.45"/>
+      <stop offset="0.85" stop-color="#fff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="ground" maskUnits="userSpaceOnUse" x="0" y="120" width="1920" height="1000">
+      <rect x="0" y="120" width="1920" height="1000" fill="url(#near)"/>
+    </mask>
     <linearGradient id="sides" x1="0" x2="1" y1="0" y2="0">
       <stop offset="0" stop-color="#000"/>
       <stop offset="0.09" stop-color="#fff"/>
