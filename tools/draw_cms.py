@@ -70,8 +70,8 @@ def group(name):
     out.append(f"<!-- {name} -->")
 
 
-def lantern(cx, cap_y, cap_rx, cap_ry, d2_y, d2_rx, d2_ry, cone_top, cone_top_hw, cone_base, cone_base_hw, cls, flue=None, n_mull=3):
-    """Glass cone lantern with two discs on top."""
+def lantern(cx, cap_y, cap_rx, cap_ry, d2_y, d2_rx, d2_ry, cone_top, cone_top_hw, cone_base, cone_base_hw, cls, flue=None, n_mull=3, tilt=(0, 0)):
+    """Glass cone lantern with two discs on top. tilt turns the cap and the lower disc (degrees)."""
     # cone
     sag = cap_ry * 0.7
     d = (f"M{f(cx - cone_base_hw)} {f(cone_base)}L{f(cx - cone_top_hw)} {f(cone_top)}"
@@ -85,29 +85,40 @@ def lantern(cx, cap_y, cap_rx, cap_ry, d2_y, d2_rx, d2_ry, cone_top, cone_top_hw
         yb = cone_base + 2 * sag * (1 - (2 * t - 1) ** 2) * 0.5
         path(f"M{f(xt)} {f(cone_top)}L{f(xb)} {f(yb)}", "b")
     # lower disc
+    if tilt[1]:
+        out.append(f'<g transform="rotate({f(tilt[1])} {f(cx)} {f(d2_y)})">')
     th2 = d2_ry * 0.7
     path(f"M{f(cx - d2_rx)} {f(d2_y)}v{f(th2)}a{f(d2_rx)} {f(d2_ry)} 0 0 0 {f(2 * d2_rx)} 0v{f(-th2)}", cls, fill=True)
     ell(cx, d2_y, d2_rx, d2_ry, cls, fill=True)
+    if tilt[1]:
+        out.append("</g>")
     # neck between the discs
     nk = d2_rx * 0.8
     path(f"M{f(cx - nk)} {f(cap_y + cap_ry * 0.6)}V{f(d2_y - d2_ry * 0.6)}M{f(cx + nk)} {f(cap_y + cap_ry * 0.6)}V{f(d2_y - d2_ry * 0.6)}", "b")
+    # flue, behind the cap
+    if flue:
+        x0, x1, y0 = flue
+        path(f"M{f(x0)} {f(cap_y)}V{f(y0)}H{f(x1)}V{f(cap_y)}", "b")
     # cap
+    if tilt[0]:
+        out.append(f'<g transform="rotate({f(tilt[0])} {f(cx)} {f(cap_y)})">')
     th = cap_ry * 0.65
     path(f"M{f(cx - cap_rx)} {f(cap_y)}v{f(th)}a{f(cap_rx)} {f(cap_ry)} 0 0 0 {f(2 * cap_rx)} 0v{f(-th)}", cls, fill=True)
     ell(cx, cap_y, cap_rx, cap_ry, cls, fill=True)
-    if flue:
-        x0, x1, y0 = flue
-        path(f"M{f(x0)} {f(cap_y - cap_ry * 0.75)}V{f(y0)}H{f(x1)}V{f(cap_y - cap_ry * 0.75)}", "b")
+    if tilt[0]:
+        out.append("</g>")
 
 
 # ---------------------------------------------------------------- curves
 
 # Outer (upper) edge of the big curved roof, left to right.
-T = [(457.8, 478), (490.3, 445.5), (529.2, 419.5), (574.7, 400), (620, 387), (694, 377), (772.5, 376),
-     (850.6, 380.5), (900, 388), (962, 396), (1024, 410), (1086, 427), (1148, 444),
-     (1210, 462), (1272, 481), (1320, 495), (1362, 508), (1424, 532), (1486, 553.5),
-     (1548, 577), (1610, 602), (1672, 619), (1718, 629), (1772, 639), (1825, 646),
-     (1878, 650.5), (1920, 652.5)]
+T = [(457.8, 478), (490.3, 445.5), (529.2, 419.5), (574.7, 400), (620, 387), (653, 380.5), (694, 377.5),
+     (731, 376.3), (772.5, 375.7), (810, 376.3), (850.6, 379.5), (900, 385), (956.5, 393.5), (1000, 401),
+     (1046.3, 411.2), (1092.5, 422.3), (1138.8, 434.4), (1170, 443.3), (1207, 455), (1244, 466.5),
+     (1281, 478.5), (1318, 490), (1336.5, 495.5), (1379, 508.5), (1416.8, 521), (1462.8, 536.5),
+     (1494.3, 547.5), (1525.7, 558.5), (1557, 570), (1588.5, 582), (1620, 594.5), (1651.3, 605.5),
+     (1682.7, 615), (1714.2, 622.5), (1745.7, 629), (1777, 634.6), (1808.5, 638.7), (1840, 641.8),
+     (1871.3, 644), (1920, 646.5)]
 # Lower edge of the roof band, left to right.
 B = [(490, 621), (529.7, 562), (566, 518), (600.6, 492), (647.5, 469), (700, 455),
      (765, 448.5), (835, 450), (900, 459), (962, 469), (1024, 484), (1086, 503), (1148, 523),
@@ -118,9 +129,26 @@ CURL = [(490, 621), (477, 628), (458, 624), (432, 614), (414, 598), (409, 578), 
         (431.8, 513.6), (457.8, 478)]
 
 
-def crease(x):
-    """Fold between the roof's front face and its underside."""
-    return at(T, x) + 0.64 * (at(B, x) - at(T, x))
+# Depth of the roof's rounded front edge, measured in from its outer edge. It
+# looks deeper towards the right, where the roof is nearer the viewer, and
+# tapers away round the curl at the left end.
+NOSE = [(574.7, 26), (650, 28.5), (780, 30.5), (912, 31.5), (1000, 34.5), (1046, 38), (1200, 43),
+        (1400, 46.5), (1600, 50), (1920, 52)]
+NOSE_CURL = [2, 6, 10, 13, 16, 18, 20, 22, 24, 25]
+
+
+def nose_edge():
+    """Inner edge of the rounded front, offset inwards from the outline."""
+    outline = CURL[1:] + T[1:]
+    depth = NOSE_CURL + [at(NOSE, x) for x, _ in T[3:]]
+    pts = []
+    for i, (x, y) in enumerate(outline):
+        x0, y0 = outline[max(i - 1, 0)]
+        x1, y1 = outline[min(i + 1, len(outline) - 1)]
+        tx, ty = x1 - x0, y1 - y0
+        n = (tx * tx + ty * ty) ** 0.5
+        pts.append((x - ty / n * depth[i], y + tx / n * depth[i]))
+    return outline, pts
 
 
 def s_top(x):
@@ -137,27 +165,49 @@ def s_bot(x):
 
 # ---------------------------------------------------------------- far building (right)
 group("building behind, right")
-path("M1594 395L1897 384M1610 399V412M1889 388V404M1610 412L1889 404", "b")
-path("M1452 415L1337 444L1559 438L1920 428M1889 404L1920 403", "b")
-path("M1372 448L1559 442L1920 432M1372 468L1559 463L1920 460", "b")
-far_head = [(1372, 448), (1559, 442), (1920, 432)]
-far_sill = [(1372, 468), (1559, 463), (1920, 460)]
-for x in (1427, 1466, 1518, 1622, 1688, 1760, 1830, 1895):
-    path(f"M{x} {f(at(far_head, x))}V{f(at(far_sill, x))}", "b")
-path("M1433 481L1720 480L1920 479M1458 500L1720 499L1920 498", "b")
-path("M1700 508H1920M1724 534H1920M1760 508V534M1830 508V534M1895 508V534", "b")
+# raised storey at the far right
+path("M1592.8 391.4L1897 380.4M1608.5 395.5L1890 385.5M1608.5 395.5V408.7M1889 385.5V403.5", "b")
+# main roof: hip up from its left tip, then along the foot of the raised storey, and the eave
+path("M1321 440.5L1451.4 417.5M1577 407L1608.5 408.7L1741.7 406.2L1920 403", "b")
+path(pl([(1321, 440.5), (1430, 436), (1522, 433.5), (1742, 428.2), (1920, 424)]), "b")
+far_head = [(1340, 447.5), (1500, 441.5), (1742, 438.5), (1920, 438)]
+far_sill = [(1340, 468), (1500, 463), (1742, 460.5), (1920, 460)]
+path(pl(far_head) + "M" + pl(far_sill)[1:], "b")
+for x in (1388, 1427, 1466, 1510, 1542, 1594, 1632, 1687, 1742, 1800, 1858):
+    path(f"M{x} {f(at(far_head, x))}V{f(at(far_sill, x))}", "c")
+# lower roof and the wall under it
+path("M1425 478L1920 477M1494 496L1920 496", "b")
+path("M1700 507H1920M1730 531H1920M1746 507V531M1808 507V531M1826 507V531M1890 507V531", "c")
 
 group("far lantern")
-path("M1452 393H1578V415H1452Z", "b", fill=True)
-path("M1436.5 390L1481 381.5H1549L1596 389L1594 392.5L1516 396.5L1438 393.5Z", "b", fill=True)
-lantern(1516, 334.5, 33, 4.5, 344.5, 27, 3.5, 348, 23, 381, 34.5, "b", flue=(1507, 1526, 321), n_mull=3)
+path("M1453 390.5V417.5L1530 413.4L1577 407V389L1530 388Z", "b", fill=True)
+path("M1530 388V413.4M1453 405L1530 402L1577 403.5", "b")
+path("M1435.7 386.7L1482 379.5H1549.5L1596.6 384.2L1595 387.2L1530 386.7L1437.5 389.9Z", "b", fill=True)
+path("M1435.7 386.7L1530 383.5L1596.6 384.2", "b")
+lantern(1516, 334, 33.5, 3.6, 344.6, 27.5, 3, 348.4, 20.5, 377, 33.3, "b", flue=(1506, 1527.4, 319.5), n_mull=3)
 
-group("middle lantern")
-path("M1018 357H1173V394H1018Z", "b", fill=True)
-path("M1018 378H1173M1055 357V378M1097 357V378M1136 357V378", "b")
-path("M1002 351L1062.5 340.5H1137.5L1193 352.5L1191.5 356L1098 350L1004 354.5Z", "b", fill=True)
-path("M1002 351L1098 346.5L1193 352.5", "b")
-lantern(1100, 283.5, 40, 5.5, 296.5, 33, 4, 300.5, 22, 340.3, 37.5, "b", flue=None, n_mull=3)
+group("middle pavilion")
+# main roof below the lantern storey: near hip, far hip, then the eave (drawn
+# once each — a single out-and-back path used to double itself here).
+path("M1100 385.5L1104.6 404.8", "b")
+path("M1173 391L1214.4 398.9L1281 412.8L1350.4 419", "b")
+path("M1104.6 404.8L1170 405.4L1214.4 408L1281 414.6L1350.4 419", "b")
+# fascia, closed off at the far corner so the hip and eave don't end in a spike
+path("M1108 409L1170 410L1350.4 423V419", "c")
+path("M1018.5 390L1006 394.5", "b")
+# lantern storey
+path("M1019.4 356L1018.5 390L1100 385.5L1173 391L1174 357L1100 353.5Z", "b", fill=True)
+path("M1100 353.5V385.5M1019.4 374L1100 370L1174 377", "b")
+for x in (1040, 1060, 1080):
+    t = (x - 1019.4) / 80.6
+    path(f"M{x} {f(356 - 2.5 * t)}V{f(374 - 4 * t)}", "c")
+for x in (1118.5, 1137, 1155.5):
+    t = (x - 1100) / 74
+    path(f"M{x} {f(353.5 + 3.5 * t)}V{f(370 + 7 * t)}", "c")
+# lantern roof
+path("M1000.5 349L1058 340.5H1136L1193.7 348L1192.5 351.5L1099.5 355L1002 352.5Z", "b", fill=True)
+path("M1000.5 349L1099.5 351.5L1193.7 348", "b")
+lantern(1097, 282, 40.7, 4.7, 296.8, 34, 3.2, 300.2, 25, 337, 39.4, "b", flue=None, n_mull=3)
 
 # ---------------------------------------------------------------- left pavilion
 group("left pavilion: brick storeys")
@@ -174,8 +224,12 @@ for x in (30, 65, 100, 136.7, 209.4, 283.6, 351.6, 412.5):
     path(f"M{f(x)} 494V541", "b")
 
 group("left pavilion: canopy roof")
-path("M0 453L149 441L266 429L192 455L232.5 477L448 472.5M266 429L489 441M0 472.5L92 475.6L232.5 477", "a")
-path("M0 478L92 481L232 482.5L446 478", "b")
+# Ridge of the canopy, the near eave, and the underside — drawn as separate
+# strokes so they do not spike through each other at the hip.
+path("M0 453L149 441L266 429L489 441", "a")
+path("M266 429L232.5 477L448 472.5", "a")
+path("M0 472.5L92 475.6L232.5 477L446 478", "b")
+path("M0 478L92 481L232 482.5L446 478", "c")
 
 group("left pavilion: top storey")
 head_l = [(45, 380), (223, 358)]
@@ -189,8 +243,8 @@ for x in (266, 288.7, 322.6, 381.2, 437.8, 488.6, 504, 541.5):
     path(f"M{f(x)} {f(at(head_f, x))}V{f(at(sill_f, x))}", "b")
 
 group("left pavilion: main roof")
-path("M0 366L184 333L274 327.7M254 335L256 339L625 362L655 366L507.4 331.6", "a")
-path("M0 371.5L184 339M258 344L620 367", "b")
+path("M0 366L184 333L274 327.7M254 335L256 339L600 361.5L695 369.3L507.4 331.6", "a")
+path("M0 371.5L184 339M258 344L600 366L672 372", "b")
 
 group("left pavilion: clerestory")
 path("M274 277V327.7M351 256V318M507.4 281V331.6", "a")
@@ -207,7 +261,7 @@ path("M239 262.5L354 248.4L530 268.5M244.5 268L354 253.5L539.6 279L541.5 276", "
 path("M274 277L351 256L507.4 281", "b")
 
 group("left pavilion: lantern")
-lantern(392, 166, 64, 9.5, 189, 53, 7.5, 197, 39, 249, 61.5, "a", flue=(377, 412, 140), n_mull=5)
+lantern(391.5, 167, 64.5, 9.5, 190, 53, 7.5, 197, 39, 249, 61.5, "a", flue=(375, 413.5, 135), n_mull=5, tilt=(3.5, 1.5))
 
 # ---------------------------------------------------------------- terrace on the left
 group("terrace railing")
@@ -216,30 +270,53 @@ path("M67 725V781M161 718V771M245 712V762M325 706.6V753", "b")
 path("M0 781L366 748", "a")
 
 # ---------------------------------------------------------------- grass roof, steps, railing
-group("grass roof and steps")
-grass = [(1203, 440), (1312, 466), (1418, 484), (1486, 494), (1560, 503), (1623, 511), (1678, 525), (1720, 539), (1769, 564), (1814, 641)]
-path(sm(grass) + "L1814 700L1203 700Z", "b", fill=True)
-path("M1857 572L1920 620", "b")
-steps = [(1203, 434)]
-for i in range(16):
-    x, y = 1203 + 28 * i, 434 + 11.2 * i
-    steps += [(x + 28, y), (x + 28, y + 11.2)]
-path(pl(steps) + "L1651 700L1203 700Z", "b", fill=True)
+
+
+def under(x0, x1):
+    """Path back along the roof edge from x1 to x0, just inside the roof so the roof hides it."""
+    xs = [x1] + [x for x, _ in reversed(T) if x0 < x < x1] + [x0]
+    return "".join(f"L{f(x)} {f(at(T, x) + 4)}" for x in xs)
+
+
+group("grass roof")
+grass = [(1316, 462), (1351, 467), (1407, 477.7), (1431, 484), (1494, 495), (1535, 500), (1592, 507.5),
+         (1620, 519), (1660, 530), (1700, 540), (1724, 547.5), (1762, 562), (1796, 584), (1808, 606), (1815, 634)]
+path(sm(grass) + under(1316, 1815) + "Z", "b", fill=True)
+
+group("stone steps")
+STEP_X, STEP_Y, STEP_DX, STEP_DY = 1261.6, 442, 28.3, 11.3
+steps = [(1199.6, 447), (1199.6, 438.7)]
+for k in range(17):
+    x, y = STEP_X + STEP_DX * k, STEP_Y + STEP_DY * k
+    steps += [(x, y), (x, y + STEP_DY - 1.6)]
+path(pl(steps) + under(1199.6, steps[-1][0]) + "Z", "b", fill=True)
+
+group("stepped slabs along the top of the roof")
+slabs = [(815, 376), (900, 380.5), (956.5, 385.7), (956.5, 389.3), (1009, 392), (1009, 396.4), (1043.5, 398.3),
+         (1043.5, 403), (1076.8, 404.4), (1076.8, 411), (1113.8, 412.5), (1113.8, 421.8), (1149, 423.3),
+         (1149, 433.8), (1185, 435.3), (1185, 446)]
+path(pl(slabs) + under(815, 1185) + "Z", "c", fill=True)
 
 group("roof railing")
-rail_a = [(667, 361), (800, 363), (900, 361.5), (1002, 355.8), (1098.5, 352.7)]
-rail_b = [(1048.9, 327.3), (1160.5, 350.9), (1241, 369.5), (1320, 392.4), (1362, 408.6), (1424, 430),
-          (1517, 473.7), (1610, 514), (1697, 546), (1772, 569), (1836, 577), (1920, 578)]
-rail_m = [(1080, 375.7), (1200, 405), (1300, 439.6), (1424, 483), (1517, 523), (1622.6, 565),
-          (1702.7, 598), (1793, 619.7), (1919, 626)]
-path("M616 382L667 361" + sm_tail(rail_a), "b")
+# Top rail along the ridge, and the handrail that runs down beside the steps.
+rail_a = [(665, 375.4), (753.4, 367.5), (803.6, 364.5), (863.3, 360), (911.7, 356.6), (1000.5, 352.2), (1098.5, 349.8)]
+rail_b = [(1050.2, 324.4), (1076.9, 329.7), (1120, 337), (1157.6, 345.5), (1189.5, 352), (1221.7, 359),
+          (1242.4, 365.2), (1278.5, 377.1), (1332.6, 395.3), (1363.4, 406.3), (1423, 429.9), (1450.3, 440.3),
+          (1516.2, 469.8), (1620, 514), (1704, 544.2), (1791.2, 564.8), (1879.2, 573.6), (1920, 574.3)]
+
+# One mid-rail under the ridge, ending where the ridge rail ends. Stair mid-rails
+# are omitted: at this scale they cut through the step outline and read as noise.
+path(sm([(866, 375.2), (900, 372.8), (1001.5, 368.3), (1076.8, 369.2), (1098.5, 369.6)]), "c")
+# posts: ridge posts stand on the roof or its slabs; stair posts stop on the step ends
+for x in (706.9, 753, 803.6, 864.9, 929.8, 1001.5):
+    foot = at(T, x) if x < 815 else at(slabs, x)
+    path(f"M{f(x)} {f(at(rail_a, x))}V{f(foot)}", "c")
+# Stair posts stand on the tread (or landing) directly below them, so they
+# never pass through the step outline; past the last step they stand on the roof.
+for x in (1241.8, 1279.5, 1332.7, 1362.7, 1422, 1447, 1514.7, 1609.9, 1702.2, 1792.2, 1880.1):
+    path(f"M{f(x)} {f(at(rail_b, x))}V{f(min(at(steps, x), at(T, x)) if x < steps[-1][0] else at(T, x))}", "c")
+path(sm(rail_a), "b")
 path(sm(rail_b), "b")
-path(sm(rail_m), "b")
-for x in (804, 865, 931, 1003):
-    path(f"M{x} {f(at(rail_a, x))}V{f(at(T, x))}", "b")
-for x, y1 in ((1076.8, 407), (1157.4, 428), (1241, 438), (1279.6, 441), (1331, 475), (1362, 490), (1422, 515),
-              (1447, 528), (1514, 557), (1532.6, 566), (1610, 596), (1619.5, 600), (1703, 622), (1791.5, 638), (1878, 646)):
-    path(f"M{f(x)} {f(at(rail_b, x))}V{f(y1)}", "b")
 
 # ---------------------------------------------------------------- glazing under the roof (drawn before the roof so the roof hides the tops)
 group("glazing under the roof")
@@ -253,11 +330,16 @@ path("M1668 802L1920 858M1668 836L1920 899", "b")
 group("curved roof")
 roof = sm(T) + "L1920 735" + sm_tail(list(reversed(B))) + sm_tail(CURL) + "Z"
 path(roof, "a", fill=True)
-cr = [(x, crease(x)) for x in range(640, 1921, 40)]
-path(sm([(497, 596), (520, 548), (552, 505), (592, 470)] + cr), "c")
+outline, inner = nose_edge()
+path(sm(inner), "c")
+# joints across the rounded front: round the curl, then along the top
+for i in (3, 5, 7, 9, 10, 11):
+    path(pl([outline[i], inner[i]]), "c")
+top_inner = [q for q in inner if q[0] > 600]
 for x in range(668, 1900, 62):
-    x1 = x + 14
-    path(f"M{x} {f(at(T, x))}Q{x + 12} {f((at(T, x) + crease(x1)) / 2)} {x1} {f(crease(x1))}", "c")
+    x1 = x + 12
+    y1 = at(top_inner, x1)
+    path(f"M{x} {f(at(T, x))}Q{x + 11} {f((at(T, x) + y1) / 2)} {x1} {f(y1)}", "c")
 
 # ---------------------------------------------------------------- screens
 group("screens")
@@ -299,23 +381,25 @@ path("M1222 733V923" + sm_tail(r_base) + "V746Z", "a", fill=True)
 ell(1446, 737, 226, 30, "a", fill=True, rot=1.7)
 out.append('<path class="a" transform="rotate(1.7 1446 737)" d="M1220 737v9a226 30 0 0 0 452 0v-9"/>')
 path("M1321 766V964M1402 772V986M1631 760V975", "b")
-g_top = [(1403.7, 814), (1500, 818), (1597.3, 817)]
-g_bot = [(1403.7, 987.7), (1500, 992), (1597.3, 984.6)]
-path(sm(g_top) + "L1631 810M" + sm(g_bot)[1:] + "L1631 974M1597.3 817V984.6M1597 872L1631 868M1597 928L1631 923", "b")
+# Head and sill as polylines so the mullions (which use linear at()) meet them flush.
+g_top = [(1403.7, 814), (1450, 816.5), (1500, 818), (1550, 817.8), (1597.3, 817)]
+g_bot = [(1403.7, 987.7), (1450, 990.5), (1500, 992), (1550, 988.5), (1597.3, 984.6)]
+path(pl(g_top) + "M" + pl(g_bot)[1:], "b")
+path("M1597.3 817V984.6M1403.7 814V987.7", "b")
+# Transoms between the right mullion and the far post.
+path("M1597.3 872L1631 868M1597.3 928L1631 923", "c")
+# Top rail continues to the far post above the open light.
+path("M1597.3 817L1631 810", "b")
 x = 1421
 while x < 1590:
     path(f"M{x} {f(at(g_top, x))}V{f(at(g_bot, x))}", "c")
     x += 18
-path("M1603.5 817L1637.6 812.8L1650 862.4L1616 869.9Z", "b", fill=True)
 
 # ---------------------------------------------------------------- ground
 group("ground")
 path("M1668 950L1920 954", "a")
 path("M600 796L646.5 833", "b")
-for a, b in (((559.7, 966.7), (1100, 1098.3)), ((621.7, 946.3), (1110, 1058.8)), ((674.4, 928.3), (1120, 1025.2)),
-             ((724, 912), (1130, 993.9)), ((767.5, 897), (1140, 967.2)), ((814, 884.9), (1150, 935.2))):
-    path(pl([a, b]), "c")
-path("M440 1001L820 1122", "b")
+# The plaza is left as open ground: loose paving joints read as stray lines.
 
 # ---------------------------------------------------------------- write
 svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 120 1920 1000" width="1920" height="1000">
@@ -338,7 +422,7 @@ svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 120 1920 1000" widt
       <stop offset="1" stop-color="#000"/>
     </linearGradient>
     <linearGradient id="foot" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0.86" stop-color="#000" stop-opacity="0"/>
+      <stop offset="0.93" stop-color="#000" stop-opacity="0"/>
       <stop offset="1" stop-color="#000"/>
     </linearGradient>
     <mask id="fade" maskUnits="userSpaceOnUse" x="0" y="120" width="1920" height="1000">
@@ -351,5 +435,7 @@ svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 120 1920 1000" widt
   </g>
 </svg>
 '''
+# The page loads assets/cms.svg?v=...; bump that query in index.html after
+# regenerating so browsers don't keep showing a cached drawing.
 open("assets/cms.svg", "w").write(svg)
 print(len(svg), "bytes,", len(out), "elements")
