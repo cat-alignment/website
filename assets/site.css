@@ -204,7 +204,7 @@ a:hover {
 .nav a[aria-current="page"] {
   color: var(--ink);
   text-decoration: underline;
-  text-underline-offset: 0.4em;
+  text-underline-offset: 0.25em;
 }
 
 /* Programs opens a small menu of the programs on hover, or when a keyboard
@@ -696,4 +696,9 @@ a:hover {
 b {
   font-weight: 600;
   color: var(--ink);
+}
+
+/* A lede of more than one paragraph. */
+.lede p + p {
+  margin-top: 0.75rem;
 }
