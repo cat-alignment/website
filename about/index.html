@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261117d">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118g">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -22,9 +22,17 @@
         <span class="logo__cat"><img src="/assets/cat.svg" alt="" width="44" height="100"></span>
       </a>
       <nav class="nav" aria-label="Main">
+        <a href="/">Home</a>
         <a href="/about/" aria-current="page">About</a>
         <a href="/people/">People</a>
-        <a href="/programs/">Programs</a>
+        <div class="nav__item">
+          <a href="/programs/">Programs</a>
+          <ul class="nav__menu">
+            <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
+          </ul>
+        </div>
+        <a href="/resources/">Resources</a>
+        <a class="nav__contact" href="/contact/">Contact us</a>
       </nav>
     </div>
   </header>
@@ -56,7 +64,7 @@
         <h2 class="row__head">Where we are now</h2>
         <div class="row__body">
           <p>We have just started. The first talk is given by Mikhail Moronov on Friday 27 November 2026 at 5:30pm, in MR2 at the Centre for Mathematical Sciences.</p>
-          <p>Our first program, mini-iliad, is listed on the <a href="/programs/">Programs page</a>.</p>
+          <p>Our first program, WHISKERS, is a two-week intensive at Meridian from 7 to 19 December. Details are on the <a href="/programs/whiskers/">Programs page</a>.</p>
         </div>
       </section>
     </div>
@@ -65,7 +73,7 @@
   <footer class="site-footer">
     <div class="wrap site-footer__inner">
       <p><span class="site-footer__name">Cambridge Alignment Theory</span><br>Cambridge, UK</p>
-      <p class="mono">Our mascot is the black cat of the CMS.</p>
+      <p class="mono">Our mascot is the <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2CVCa9D3Yw6DitdJ8UQ2iGweusYpNW1UFbSg_IdMAsS53V9Vcbpvq-c&amp;s=10">black cat of the CMS</a>.</p>
     </div>
   </footer>
 </body>

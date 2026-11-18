@@ -8,8 +8,8 @@
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261117d">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Geist+Mono&display=swap">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118g">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -22,9 +22,17 @@
         <span class="logo__cat"><img src="/assets/cat.svg" alt="" width="44" height="100"></span>
       </a>
       <nav class="nav" aria-label="Main">
+        <a href="/">Home</a>
         <a href="/about/">About</a>
         <a href="/people/">People</a>
-        <a href="/programs/" aria-current="page">Programs</a>
+        <div class="nav__item">
+          <a href="/programs/" aria-current="page">Programs</a>
+          <ul class="nav__menu">
+            <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
+          </ul>
+        </div>
+        <a href="/resources/">Resources</a>
+        <a class="nav__contact" href="/contact/">Contact us</a>
       </nav>
     </div>
   </header>
@@ -32,16 +40,22 @@
   <main id="main">
     <div class="wrap page-head">
       <h1 class="display">Programs</h1>
-      <p class="lede">One so far.</p>
     </div>
 
     <hr class="rule">
 
     <div class="wrap rows">
-      <section class="row">
-        <h2 class="row__head">mini-iliad</h2>
+      <section class="row" aria-labelledby="whiskers-title">
+        <div class="meta mono">
+          <p>Two-week intensive</p>
+          <p><time datetime="2026-12-07">7</time> to <time datetime="2026-12-19">19 December 2026</time></p>
+          <p>Meridian, Cambridge</p>
+        </div>
         <div class="row__body">
-          <p>Details to be announced.</p>
+          <h2 class="row__title" id="whiskers-title"><a class="title-link" href="/programs/whiskers/">WHISKERS</a></h2>
+          <p class="row__sub"><b>W</b>inter <b>H</b>ub for <b>I</b>ntensive <b>S</b>tudy of <b>K</b>ey <b>E</b>lements in <b>R</b>igorous <b>S</b>afety</p>
+          <p>Two weeks introducing mathematicians and physicists to theoretical alignment research. We watch lectures together, work through problem sets, and discuss.</p>
+          <p class="actions"><a class="more-link" href="/programs/whiskers/">Details, schedule and applications <span aria-hidden="true">→</span></a></p>
         </div>
       </section>
     </div>
@@ -50,7 +64,7 @@
   <footer class="site-footer">
     <div class="wrap site-footer__inner">
       <p><span class="site-footer__name">Cambridge Alignment Theory</span><br>Cambridge, UK</p>
-      <p class="mono">Our mascot is the black cat of the CMS.</p>
+      <p class="mono">Our mascot is the <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2CVCa9D3Yw6DitdJ8UQ2iGweusYpNW1UFbSg_IdMAsS53V9Vcbpvq-c&amp;s=10">black cat of the CMS</a>.</p>
     </div>
   </footer>
 </body>

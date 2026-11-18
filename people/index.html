@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261117d">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118g">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -22,9 +22,17 @@
         <span class="logo__cat"><img src="/assets/cat.svg" alt="" width="44" height="100"></span>
       </a>
       <nav class="nav" aria-label="Main">
+        <a href="/">Home</a>
         <a href="/about/">About</a>
         <a href="/people/" aria-current="page">People</a>
-        <a href="/programs/">Programs</a>
+        <div class="nav__item">
+          <a href="/programs/">Programs</a>
+          <ul class="nav__menu">
+            <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
+          </ul>
+        </div>
+        <a href="/resources/">Resources</a>
+        <a class="nav__contact" href="/contact/">Contact us</a>
       </nav>
     </div>
   </header>
@@ -37,12 +45,10 @@
 
     <hr class="rule">
 
-    <!-- Yuv Saxena's photo is still a placeholder. -->
+    <!-- Photos are square crops, all shown at the same size. -->
     <ul class="wrap people">
       <li class="person">
-        <span class="person__frame">
-          <img class="person__photo person__photo--will" src="/assets/will-lancer.jpg" alt="" width="216" height="294">
-        </span>
+        <img class="person__photo" src="/assets/will-lancer.jpg" alt="" width="216" height="216">
         <div>
           <h2 class="person__name">Will Lancer</h2>
           <p class="person__role mono">Cofounder</p>
@@ -58,7 +64,7 @@
         </div>
       </li>
       <li class="person">
-        <span class="person__tile">TBD</span>
+        <img class="person__photo" src="/assets/yuv-saxena.jpg" alt="" width="216" height="216">
         <div>
           <h2 class="person__name">Yuv Saxena</h2>
           <p class="person__role mono">Cofounder</p>
@@ -79,7 +85,7 @@
   <footer class="site-footer">
     <div class="wrap site-footer__inner">
       <p><span class="site-footer__name">Cambridge Alignment Theory</span><br>Cambridge, UK</p>
-      <p class="mono">Our mascot is the black cat of the CMS.</p>
+      <p class="mono">Our mascot is the <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2CVCa9D3Yw6DitdJ8UQ2iGweusYpNW1UFbSg_IdMAsS53V9Vcbpvq-c&amp;s=10">black cat of the CMS</a>.</p>
     </div>
   </footer>
 </body>

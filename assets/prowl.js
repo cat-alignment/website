@@ -1,11 +1,16 @@
 /*
   The CAT cat goes for a wander.
 
-  Every so often the cat in the logo hops down onto the ice line under the
-  header and slinks along it, between the logo and the "About" link (which it
-  treats as a wall). Now and then it stops to loaf, glance round at you, or sit
-  and lick its paw. After a while it slinks home and hops back up beside the
-  letters.
+  Every so often the cat in the logo gets up and slinks along the ice line
+  under the header, between the logo and the "About" link (which it treats as
+  a wall). Now and then it stops to loaf, glance round at you, or sit and lick
+  its paw. After a while it slinks home and sits back down beside the letters.
+
+  There is never a swap between two cats. While the script runs, the logo cat
+  itself is drawn on the canvas (the same paths as assets/cat.svg, tail swish
+  and all) and the <img> is hidden. When it sets off, that shape melts into
+  the moving cat and the hanging tail swings up; when it comes home, the moving
+  cat melts back into exactly the logo cat, on exactly the same ground line.
 
   The wandering cat is a small 3D rig drawn on a canvas every frame: a spine of
   spheres, rolling shoulder blades, a head with ears and eyes, a jointed tail
@@ -34,10 +39,7 @@
   const style = document.createElement("style");
   style.textContent = `
     .site-header { position: relative; }
-    .prowl { position: absolute; left: 0; bottom: 2px; width: 100%; z-index: 2;
-             pointer-events: none; opacity: 0; transition: opacity .35s ease; }
-    .prowl.is-out { opacity: 1; }
-    .logo__cat img { transition: opacity .35s ease; }`;
+    .prowl { position: absolute; left: 0; top: 0; width: 100%; z-index: 2; pointer-events: none; }`;
   document.head.appendChild(style);
 
   const canvas = document.createElement("canvas");
@@ -56,6 +58,52 @@
   const lerp = (a, b, t) => a + (b - a) * t;
   const rand = (a, b) => a + Math.random() * (b - a);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const smooth = (u) => u * u * (3 - 2 * u);
+
+  // ------------------------------------------------------------------ the logo cat
+  // Copied from assets/cat.svg: viewBox 0 0 44 100, ledge at y = 62, drawn
+  // mirrored. Keep the two in step.
+  const LOGO = {
+    body: new Path2D("M13 62C8 62 5.5 57.5 6 52C6.6 44 10.5 37 14.5 30.5C15.8 28.4 16.6 26.4 16.9 24.6C15 22.4 14.2 18.8 14.8 15.4C15 14 15.4 12.8 15.9 11.8L15.6 2.6L21.8 7.2C23.2 6.8 25 6.8 26.4 7.2L31.6 2.4L32.4 10.8C33.4 12.6 33.9 14.8 33.6 16.8C33.3 19.6 31.8 22 29.4 23.6C31.6 27 33.6 32 34.6 38C35.6 44.5 36 50 35.8 55C35.8 59.5 34 62 31 62Z"),
+    whisk: new Path2D("M33.4 16.6L38.6 15.4M33.2 18.6L38.2 19.6"),
+    ice: new Path2D("M29.2 8.8L30.9 5.6L31.3 9.8M28 61C28.4 55 25 50.5 20 50.5"),
+  };
+  // The tail swish: M13 57C11.5 64 a 71 b 78S c d e f, as [a, b, c, d, e, f].
+  const SWISH_T = [0, 0.52, 0.59, 0.67, 0.75, 0.83, 0.93, 1];
+  const SWISH = [
+    [10.8, 11.6, 14, 89, 12, 95], [10.8, 11.6, 14, 89, 12, 95], [11.3, 12.5, 10, 90, 5.5, 92.5],
+    [10.3, 10.7, 14, 90, 19.5, 93], [11.1, 12.1, 11.5, 90, 8, 94.5], [10.6, 11.2, 14.3, 89.5, 15.6, 95],
+    [10.8, 11.6, 14, 89, 12, 95], [10.8, 11.6, 14, 89, 12, 95],
+  ];
+  const bez1 = (t, a, b) => 3 * a * t * (1 - t) * (1 - t) + 3 * b * t * t * (1 - t) + t * t * t;
+  function ease4555(u) { // cubic-bezier(.45, 0, .55, 1), as in the SVG's keySplines
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 18; i++) { const m = (lo + hi) / 2; if (bez1(m, 0.45, 0.55) < u) lo = m; else hi = m; }
+    return bez1((lo + hi) / 2, 0, 1);
+  }
+  // The SVG animation's clock starts when the image loads.
+  let logoT0 = performance.now();
+  try {
+    const e = performance.getEntriesByName(seat.currentSrc || seat.src)[0];
+    if (e && e.responseEnd) logoT0 = e.responseEnd;
+  } catch (_) { /* keep the estimate */ }
+  if (!seat.complete) seat.addEventListener("load", () => { logoT0 = performance.now(); }, { once: true });
+  const swishTime = () => (((performance.now() - logoT0) / 1000) % 7 + 7) % 7;
+  // The tail's seven control points (svg units) at the current moment.
+  function logoTail() {
+    const u = swishTime() / 7;
+    let i = 0;
+    while (i < SWISH_T.length - 2 && u >= SWISH_T[i + 1]) i++;
+    let f = clamp((u - SWISH_T[i]) / (SWISH_T[i + 1] - SWISH_T[i]), 0, 1);
+    if (i >= 1 && i <= 5) f = ease4555(f);
+    const v = SWISH[i].map((a, j) => lerp(a, SWISH[i + 1][j], f));
+    return [[13, 57], [11.5, 64], [v[0], 71], [v[1], 78], [2 * v[1] - v[0], 85], [v[2], v[3]], [v[4], v[5]]];
+  }
+  const cub = (a, b, c, d, t) => {
+    const u = 1 - t;
+    return [u * u * u * a[0] + 3 * u * u * t * b[0] + 3 * u * t * t * c[0] + t * t * t * d[0],
+            u * u * u * a[1] + 3 * u * u * t * b[1] + 3 * u * t * t * c[1] + t * t * t * d[1]];
+  };
 
   // ------------------------------------------------------------------ poses
   const STAND = {
@@ -79,7 +127,7 @@
       fFoot: 6, hFoot: 4,
     },
     sit: {
-      ...STAND, hipX: -9, hipY: -9, shX: 3, shY: -30, arch: -1, fat: 1,
+      ...STAND, hipX: -9, hipY: -9, shX: 3, shY: -30, arch: -1, fat: 1.2,
       headX: 2, headY: -9.5, tilt: -4, haunch: 1, tailA: 140, tailC: -10, tailFloor: 1,
       fFoot: 2, hFoot: 9,
     },
@@ -94,8 +142,11 @@
     yaw: 25, yawT: 25,
     v: 0, phase: 0, amp: 0,
     t: 0, goal: null, onGoal: null,
-    jump: null, blinkAt: 2, blinkT: 0,
+    blinkAt: 2, blinkT: 0,
+    m: 0, mT: 0, // 0 = the logo cat, 1 = the moving cat
   };
+  const MORPH = 0.9; // seconds to melt from one into the other
+  const SEAT_YAW = -105; // back to us, head turned left, like the logo cat
   const setPose = (name, snap) => { T = POSES[name]; if (snap) Object.assign(P, T); };
 
   const V = 30;      // slinking speed, units/s
@@ -104,28 +155,41 @@
   const ACC = 30;    // units/s^2: eases in and out of a walk
   const VIEW = 25;   // the cat is always seen a little from the front
   const HS = 0.95;   // head scale
+  const HOME_DX = 0; // lines the sitting moving cat up over the logo cat
+  const SS = 2;      // supersampling of the smooth silhouette
 
   // ------------------------------------------------------------------ geometry
-  let k = 0.5, W = 0, H = 0, dpr = 1, geo = null;
+  // k: css px per cat unit. L: where the logo cat sits on the canvas.
+  let k = 0.5, W = 0, H = 0, dpr = 1, ground = 0, geo = null;
+  const L = { x: 0, y: 0, q: 0.4 };
   function measure() {
-    // One fixed scale, matched to the logo cat (its head and body widths).
-    k = seat.getBoundingClientRect().height / 84 || 0.5;
-    W = header.clientWidth;
-    H = Math.ceil(84 * k);
-    dpr = Math.min(2, window.devicePixelRatio || 1);
-    canvas.style.height = H + "px";
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
     const h = header.getBoundingClientRect();
     const st = seat.getBoundingClientRect();
     const wl = wall.getBoundingClientRect();
+    // One fixed scale, matched to the logo cat: 100 svg units = 84 cat units.
+    k = st.height / 84 || 0.5;
+    L.q = st.height / 100 || 0.4;
+    // The ground is the logo cat's own ledge (svg y = 62), so the moving cat
+    // stands exactly where the logo cat sits.
+    const ledge = st.top - h.top + 62 * L.q;
+    const top = Math.floor(ledge - 66 * k);
+    W = header.clientWidth;
+    H = Math.ceil(ledge + 40 * k - top);
+    ground = ledge - top;
+    dpr = Math.min(3, window.devicePixelRatio || 1);
+    // the browser paints the <img> snapped down to whole device pixels; do the same
+    L.x = Math.floor(st.left * dpr + 1e-3) / dpr - h.left;
+    L.y = Math.floor(st.top * dpr + 1e-3) / dpr - h.top - top;
+    canvas.style.top = top + "px";
+    canvas.style.height = H + "px";
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
     const reach = 36 * k;
-    const home = st.left + st.width / 2 - h.left;
+    const home = L.x + 23 * L.q + HOME_DX * k;
     geo = {
       home,
       min: home,
       max: wl.left - h.left - 6 - reach, // the nose stops just short of "About"
-      seatDy: st.top + st.height * 0.62 - (h.bottom - 2),
       reach,
     };
     if (s.goal !== null) s.goal = clamp(s.goal, geo.min, Math.max(geo.min, geo.max));
@@ -177,14 +241,7 @@
     const ampT = Math.max(Math.min(1, s.v / (V * 0.5)), turning ? 0.4 : 0);
     s.amp += (ampT - s.amp) * (1 - Math.exp(-dt * 4));
 
-    if (s.jump) {
-      const j = s.jump;
-      j.t += dt;
-      const u = clamp(j.t / j.dur, 0, 1);
-      const e = u * u * (3 - 2 * u);
-      s.gy = lerp(j.from, j.to, e) - Math.sin(Math.PI * u) * 9 * k;
-      if (u >= 1) { s.jump = null; j.done(); }
-    }
+    s.m += clamp(s.mT - s.m, -dt / MORPH, dt / MORPH);
 
     if (s.t > s.blinkAt) { s.blinkT = 0.16; s.blinkAt = s.t + rand(2.5, 6); }
     s.blinkT = Math.max(0, s.blinkT - dt);
@@ -205,7 +262,11 @@
     const dc = clamp(d, Math.abs(a - b) + 0.1, a + b - 0.05);
     const base = Math.atan2(dy, dx);
     const al = Math.acos(clamp((a * a + dc * dc - b * b) / (2 * a * dc), -1, 1));
-    return [jx + a * Math.cos(base + al), jy + a * Math.sin(base + al), jx + dx / d * dc, jy + dy / d * dc];
+    let kx = jx + a * Math.cos(base + al), ky = jy + a * Math.sin(base + al);
+    // a folded leg (sitting, loafing) never pushes its knee through the floor
+    const ky2 = jy + a * Math.sin(base - al);
+    if (ky > -2 && ky2 < ky) { kx = jx + a * Math.cos(base - al); ky = ky2; }
+    return [kx, ky, jx + dx / d * dc, jy + dy / d * dc];
   }
 
   // ------------------------------------------------------------------ drawing
@@ -240,14 +301,43 @@
       }
     }
   }
-  let alphaBuf = new Float32Array(0), tmpBuf = new Float32Array(0);
+  let alphaBuf = new Float32Array(0), tmpBuf = new Float32Array(0), logoBuf = new Float32Array(0);
+
+  // Paint the logo cat (body, whiskers, ice lines and, if given, its tail)
+  // onto c2d, where sx is device px per css px and (ox, oy) the css origin.
+  function paintLogo(c2d, sx, ox, oy, alpha, tail, silhouetteOnly) {
+    c2d.save();
+    c2d.globalAlpha = alpha;
+    c2d.setTransform(-L.q * sx, 0, 0, L.q * sx, (L.x + 44 * L.q - ox) * sx, (L.y - oy) * sx);
+    c2d.lineJoin = "round"; c2d.lineCap = "round";
+    c2d.fillStyle = FUR; c2d.strokeStyle = FUR;
+    c2d.lineWidth = 1;
+    c2d.fill(LOGO.body); c2d.stroke(LOGO.body);
+    if (!silhouetteOnly) {
+      c2d.lineWidth = 0.8; c2d.stroke(LOGO.whisk);
+      c2d.strokeStyle = ICE; c2d.lineWidth = 1.4; c2d.stroke(LOGO.ice);
+      if (tail) {
+        c2d.strokeStyle = FUR; c2d.lineWidth = 3.4;
+        c2d.beginPath(); c2d.moveTo(tail[0][0], tail[0][1]);
+        c2d.bezierCurveTo(tail[1][0], tail[1][1], tail[2][0], tail[2][1], tail[3][0], tail[3][1]);
+        c2d.bezierCurveTo(tail[4][0], tail[4][1], tail[5][0], tail[5][1], tail[6][0], tail[6][1]);
+        c2d.stroke();
+      }
+    }
+    c2d.restore();
+  }
+  const logoPt = (p) => [L.x + (44 - p[0]) * L.q, L.y + p[1] * L.q];
 
   function draw() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const m = smooth(clamp(s.m, 0, 1));
+    const lt = logoTail();
+    if (m < 0.001) { paintLogo(ctx, dpr, 0, 0, 1, lt); return; }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
 
     const th = s.yaw * D2R, c = Math.cos(th), sn = Math.sin(th);
-    const baseY = H - 1 + s.gy;
+    const baseY = ground + s.gy;
     const pr = (x, y, z) => [s.x + (x * c - z * sn) * k, baseY + y * k, x * sn + z * c];
     const blobs = [];   // smooth silhouette: circles and capsules
     const crisp = [];   // drawn sharp on top
@@ -275,7 +365,7 @@
     if (P.haunch > 0.02) {
       for (const side of [1, -1]) {
         const [X, Y] = pr(P.hipX + 3, hipY - 1.5, side * 3);
-        blobs.push([X, Y, 9 * P.haunch * k]);
+        blobs.push([X, Y, 10.5 * P.haunch * k]);
       }
     }
 
@@ -301,7 +391,9 @@
     const MZ = hp(5.4, 2.4, 0);
     blobs.push([MZ[0], MZ[1], 3.5 * HS * k]);
     for (const side of [1, -1]) {
-      crisp.push({ poly: [hp(-3.6, -4.6, side * 1.3), hp(1.4, -5.4, side * 4.8), hp(-1.6, -12, side * 4)] });
+      const ear = [hp(-3.6, -4.6, side * 2), hp(1.4, -5.4, side * 5.8), hp(-1.6, -12, side * 5)];
+      crisp.push({ poly: ear });
+      blobs.push({ poly: ear });
       const E = hp(4.3, -1.4, side * 3.4);
       const nz = (E[2] - H0[2]) / (5.7 * HS);
       if (nz > 0.12) crisp.push({ eye: [E[0], E[1], P.eye * (s.blinkT > 0 ? 0.1 : 1), clamp((nz - 0.12) * 5, 0, 1)] });
@@ -321,7 +413,6 @@
       const [go, lift, stance] = gait(s.phase + L.off);
       let fx = (L.front ? P.shX + P.fFoot : P.hipX + P.hFoot) + go * amp;
       let fy = -2.1 - lift * amp;
-      if (s.jump) fy -= Math.sin(Math.PI * clamp(s.jump.t / s.jump.dur, 0, 1)) * 3;
       const raised = L.front && L.side === nearSide && P.raise > 0.01;
       if (raised) {
         const lb = P.lick * 0.8 * Math.sin(s.t * 10);
@@ -354,55 +445,91 @@
         a += P.tailC + Math.sin(s.t * 1.6 - i * 0.5) * (1.5 + sway * 2.2 * (0.5 + amp));
         x += 2.7 * Math.cos(a * D2R);
         y = Math.min(y + 2.7 * Math.sin(a * D2R), -1.7);
-        z = P.tailFloor * W_SIDE * 1.7 * (i / 12) + sway * Math.sin(s.t * 1.9 - i * 0.4) * i * 0.28;
+        z = P.tailFloor * W_SIDE * 2.8 * (i / 12) + sway * Math.sin(s.t * 1.9 - i * 0.4) * i * 0.28;
         tail.push(pr(x, y, z));
       }
     }
 
-    // ---- smooth silhouette: draw blobs, blur, threshold
+    // ---- smooth silhouette: draw blobs, blur, threshold. While melting, the
+    // field is a mix of the logo cat's and the moving cat's, so one shape
+    // flows into the other instead of cross-fading.
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     const grow = (x, y, r) => { x0 = Math.min(x0, x - r); y0 = Math.min(y0, y - r); x1 = Math.max(x1, x + r); y1 = Math.max(y1, y + r); };
     for (const b of blobs) {
-      if (Array.isArray(b[0])) { grow(b[0][0], b[0][1], b[2]); grow(b[1][0], b[1][1], b[2]); }
+      if (b.poly) for (const p of b.poly) grow(p[0], p[1], 0);
+      else if (Array.isArray(b[0])) { grow(b[0][0], b[0][1], b[2]); grow(b[1][0], b[1][1], b[2]); }
       else grow(b[0], b[1], b[2]);
     }
+    if (m < 1) { const a = logoPt([37, 1.5]), b = logoPt([5, 63]); grow(a[0], a[1], 0); grow(b[0], b[1], 0); }
+    const G = dpr * SS;
     const pad = 4;
     const gx = Math.floor(x0 - pad), gy = Math.floor(y0 - pad);
-    const gw = Math.ceil((x1 - x0 + 2 * pad) * dpr), gh = Math.ceil((y1 - y0 + 2 * pad) * dpr);
+    const gw = Math.ceil((x1 - gx + pad) * G), gh = Math.ceil((y1 - gy + pad) * G);
     if (goo.width < gw || goo.height < gh) { goo.width = Math.max(goo.width, gw); goo.height = Math.max(goo.height, gh); }
+    const n = gw * gh;
+    if (alphaBuf.length < n) { alphaBuf = new Float32Array(n); tmpBuf = new Float32Array(n); logoBuf = new Float32Array(n); }
+    gctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (m < 1) {
+      gctx.clearRect(0, 0, goo.width, goo.height);
+      paintLogo(gctx, G, gx, gy, 1, null, true);
+      const d0 = gctx.getImageData(0, 0, gw, gh).data;
+      for (let i = 0; i < n; i++) logoBuf[i] = d0[i * 4 + 3];
+    }
     gctx.setTransform(1, 0, 0, 1, 0, 0);
     gctx.clearRect(0, 0, goo.width, goo.height);
-    gctx.setTransform(dpr, 0, 0, dpr, -gx * dpr, -gy * dpr);
-    gctx.fillStyle = "#000"; gctx.strokeStyle = "#000"; gctx.lineCap = "round";
+    gctx.setTransform(G, 0, 0, G, -gx * G, -gy * G);
+    gctx.fillStyle = "#000"; gctx.strokeStyle = "#000"; gctx.lineCap = "round"; gctx.lineJoin = "round";
     for (const b of blobs) {
-      if (Array.isArray(b[0])) {
+      if (b.poly) {
+        gctx.lineWidth = 0.9 * k;
+        gctx.beginPath(); b.poly.forEach((p, i) => (i ? gctx.lineTo(p[0], p[1]) : gctx.moveTo(p[0], p[1])));
+        gctx.closePath(); gctx.fill(); gctx.stroke();
+      } else if (Array.isArray(b[0])) {
         gctx.lineWidth = b[2];
         gctx.beginPath(); gctx.moveTo(b[0][0], b[0][1]); gctx.lineTo(b[1][0], b[1][1]); gctx.stroke();
       } else {
         gctx.beginPath(); gctx.arc(b[0], b[1], b[2], 0, Math.PI * 2); gctx.fill();
       }
     }
+    gctx.setTransform(1, 0, 0, 1, 0, 0);
     const img = gctx.getImageData(0, 0, gw, gh);
-    const d = img.data, n = gw * gh;
-    if (alphaBuf.length < n) { alphaBuf = new Float32Array(n); tmpBuf = new Float32Array(n); }
-    for (let i = 0; i < n; i++) alphaBuf[i] = d[i * 4 + 3];
-    const r = Math.max(1, Math.round(1.1 * k * dpr * 1.6));
+    const d = img.data;
+    if (m < 1) for (let i = 0; i < n; i++) alphaBuf[i] = d[i * 4 + 3] * m + logoBuf[i] * (1 - m);
+    else for (let i = 0; i < n; i++) alphaBuf[i] = d[i * 4 + 3];
+    const r = Math.max(1, Math.round(1.76 * k * G * lerp(0.5, 1, m)));
     blurAlpha(alphaBuf, gw, gh, r, tmpBuf);
     blurAlpha(alphaBuf, gw, gh, Math.max(1, r >> 1), tmpBuf);
-    const gain = Math.max(2.5, r * 1.9); // edge about one device pixel wide
+    const gain = Math.max(3, r * 2.2); // a hard edge; the downscale below antialiases it
     for (let i = 0; i < n; i++) {
       const a = clamp((alphaBuf[i] - 128) * gain + 128, 0, 255);
       d[i * 4] = 11; d[i * 4 + 1] = 11; d[i * 4 + 2] = 13; d[i * 4 + 3] = a;
     }
     gctx.putImageData(img, 0, 0);
-    ctx.drawImage(goo, 0, 0, gw, gh, gx, gy, gw / dpr, gh / dpr);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(goo, 0, 0, gw, gh, gx, gy, gw / G, gh / G);
+
+    // the logo cat's own crisp lines fade as it starts to move
+    const la = clamp(1 - m / 0.35, 0, 1);
+    if (la > 0) paintLogo(ctx, dpr, 0, 0, la, null);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const ra = clamp((m - 0.35) / 0.65, 0, 1); // the moving cat's details fade in
 
     // ---- crisp details
     ctx.lineCap = "round"; ctx.lineJoin = "round";
     ctx.strokeStyle = FUR; ctx.fillStyle = FUR;
-    // tail as one smooth tapering curve
+    // tail as one smooth tapering curve; while melting it swings between the
+    // logo cat's hanging tail and the moving cat's
+    if (m < 1) {
+      const lp = [];
+      for (let i = 0; i <= 6; i++) lp.push(cub(lt[0], lt[1], lt[2], lt[3], i / 6));
+      for (let i = 1; i <= 6; i++) lp.push(cub(lt[3], lt[4], lt[5], lt[6], i / 6));
+      for (let i = 0; i < tail.length; i++) {
+        const p = logoPt(lp[i]);
+        tail[i] = [lerp(p[0], tail[i][0], m), lerp(p[1], tail[i][1], m)];
+      }
+    }
     for (const [w, end] of [[4.2, 6], [3.3, tail.length - 1]]) {
-      ctx.lineWidth = w * k;
+      ctx.lineWidth = lerp(3.4 * L.q, w * k, m);
       ctx.beginPath();
       ctx.moveTo(tail[0][0], tail[0][1]);
       for (let i = 1; i < end; i++) {
@@ -412,6 +539,7 @@
       ctx.lineTo(tail[end][0], tail[end][1]);
       ctx.stroke();
     }
+    ctx.globalAlpha = ra;
     for (const it of crisp) {
       if (it.poly) {
         ctx.beginPath();
@@ -425,10 +553,11 @@
         ctx.moveTo(o[0], o[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
       }
     }
+    ctx.globalAlpha = 1;
     // ice-blue details, like the logo cat's
     if (raisedLeg && P.raise > 0.05) {
       const [J, K, F] = raisedLeg;
-      ctx.globalAlpha = P.raise;
+      ctx.globalAlpha = P.raise * ra;
       // outline the forearm only, so it reads against the chest
       ctx.strokeStyle = ICE; ctx.lineWidth = 5.4 * k;
       ctx.beginPath(); ctx.moveTo(lerp(K[0], F[0], 0.2), lerp(K[1], F[1], 0.2)); ctx.lineTo(F[0], F[1]); ctx.stroke();
@@ -438,7 +567,7 @@
       ctx.globalAlpha = 1;
     }
     {
-      const alpha = clamp(Math.abs(c) * 1.6 - 0.4, 0, 1) * (1 - P.haunch);
+      const alpha = clamp(Math.abs(c) * 1.6 - 0.4, 0, 1) * (1 - P.haunch) * ra;
       if (alpha > 0.02) {
         ctx.globalAlpha = alpha;
         ctx.strokeStyle = ICE; ctx.lineWidth = 1.3 * k;
@@ -455,7 +584,7 @@
     for (const it of crisp) {
       if (!it.eye) continue;
       const [X, Y, open, alpha] = it.eye;
-      ctx.globalAlpha = alpha;
+      ctx.globalAlpha = alpha * ra;
       if (open > 0.4) {
         ctx.fillStyle = ICE;
         ctx.beginPath(); ctx.ellipse(X, Y, 1.4 * k, 1.15 * k * open, 0, 0, Math.PI * 2); ctx.fill();
@@ -468,13 +597,24 @@
   }
 
   // ------------------------------------------------------------------ loop
+  // The canvas draws the logo cat all the time, so the moving cat can grow
+  // straight out of it. If anything goes wrong the <img> comes back.
   let running = false, last = 0;
   function frame(now) {
     if (!running) return;
     const dt = Math.min(0.05, (now - last) / 1000 || 0);
     last = now;
-    update(dt);
-    draw();
+    try {
+      update(dt);
+      draw();
+      seat.style.visibility = "hidden";
+    } catch (err) {
+      running = false;
+      seat.style.visibility = "";
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      throw err;
+    }
     requestAnimationFrame(frame);
   }
   function start() {
@@ -483,7 +623,6 @@
     last = performance.now();
     requestAnimationFrame(frame);
   }
-  function stop() { running = false; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
   // ------------------------------------------------------------------ behaviour
   const walkTo = (x) => new Promise((done) => {
@@ -491,25 +630,21 @@
     s.goal = clamp(x, geo.min, Math.max(geo.min, geo.max));
     s.onGoal = () => { setPose("stand"); done(); };
   });
-  const jumpTo = (gy) => new Promise((done) => { s.jump = { from: s.gy, to: gy, t: 0, dur: 0.55, done }; });
   const face = (deg) => { s.yawT = nearestAngle(deg, s.yaw); };
+  const melt = (to) => { s.mT = to; return sleep(MORPH * 1000 + 150); };
 
   async function outing() {
     measure();
     if (geo.max - geo.min < geo.reach * 4) return; // not enough room on small screens
 
-    // Appear on the seat, sitting with its back to us like the logo cat.
-    s.x = geo.home; s.gy = geo.seatDy; s.yaw = s.yawT = -105; s.v = 0; s.amp = 0;
+    // The logo cat comes to life where it sits.
+    s.x = geo.home; s.gy = 0; s.yaw = s.yawT = SEAT_YAW; s.v = 0; s.amp = 0; s.goal = null;
     setPose("sit", true);
-    start();
-    canvas.classList.add("is-out");
-    seat.style.opacity = "0";
-    await sleep(800);
+    await melt(1);
+    await sleep(300);
     setPose("stand");
     face(VIEW);
-    await sleep(1100);
-    await jumpTo(0);
-    await sleep(400);
+    await sleep(1400);
 
     const n = 3 + Math.floor(Math.random() * 4);
     for (let i = 0; i < n; i++) {
@@ -538,26 +673,22 @@
       await sleep(800);
     }
 
-    // Home: slink back, turn our back to us, sit, hop up, and become the logo again.
+    // Home: slink back, turn our back to us, sit, and become the logo cat again.
     measure();
     await walkTo(geo.home);
-    face(-105);
-    await sleep(1100);
+    face(SEAT_YAW);
+    await sleep(1200);
     setPose("sit");
-    await sleep(700);
-    await jumpTo(geo.seatDy);
-    await sleep(450);
-    seat.style.opacity = "";
-    canvas.classList.remove("is-out");
-    await sleep(450);
-    stop();
+    await sleep(1100);
+    await melt(0);
   }
 
   if (location.hash === "#cat-debug") {
-    window.__cat = { s, P, setPose, measure, start, draw, update, geo: () => geo, canvas, seat };
+    window.__cat = { s, P, setPose, measure, start, draw, update, geo: () => geo, canvas, seat, L, logoTail };
     return;
   }
 
+  start();
   (async () => {
     await sleep(rand(2500, 4000));
     for (;;) {

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261117d">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118g">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -22,9 +22,17 @@
         <span class="logo__cat"><img src="/assets/cat.svg" alt="" width="44" height="100"></span>
       </a>
       <nav class="nav" aria-label="Main">
+        <a href="/" aria-current="page">Home</a>
         <a href="/about/">About</a>
         <a href="/people/">People</a>
-        <a href="/programs/">Programs</a>
+        <div class="nav__item">
+          <a href="/programs/">Programs</a>
+          <ul class="nav__menu">
+            <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
+          </ul>
+        </div>
+        <a href="/resources/">Resources</a>
+        <a class="nav__contact" href="/contact/">Contact us</a>
       </nav>
     </div>
   </header>
@@ -34,12 +42,13 @@
       <div class="hero__text">
         <h1 class="display">Cambridge Alignment Theory</h1>
         <!-- Placeholder text. Replace this paragraph with your own introduction. -->
-        <p class="lede">CAT (Cambridge Alignment Theory) is an organization of students and
-          researchers based in Cambridge performing theoretical AI safety research. During the Michaelmas
-          term, we will be hosting multiple talks introducing mathematicians to the field of theoretical
-          AI safety. We'll also be hosting an application-only intensive program running 
-          Dec. 5 - 15, aimed at introducing established students and researchers to the field of 
-          theoretical alignment (AI safety) research.
+        <p class="lede">The CAT (Cambridge Alignment Theory) Research Group is a Cambridge-based 
+          AI safety fieldbuilding organisation, focused on engaging mathematicians in theoretical 
+          research. In our inaugural term this Michaelmas, we will be hosting multiple talks 
+          introducing mathematicians to the field of theoretical AI safety. We'll also be hosting 
+          an intensive program running Dec. 7 - 19, aimed at introducing established students and 
+          researchers to the field of theoretical alignment research, with a view to extend this to 
+          a regular lecture series in Lent.
         </p>
       </div>
       <img class="hero__art" src="/assets/cms.svg?v=20261117e" alt="Line drawing of the Centre for Mathematical Sciences in Cambridge, seen from in front and to the right" width="1920" height="1000">
@@ -73,7 +82,7 @@
   <footer class="site-footer">
     <div class="wrap site-footer__inner">
       <p><span class="site-footer__name">Cambridge Alignment Theory</span><br>Cambridge, UK</p>
-      <p class="mono">Our mascot is the black cat of the CMS.</p>
+      <p class="mono">Our mascot is the <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2CVCa9D3Yw6DitdJ8UQ2iGweusYpNW1UFbSg_IdMAsS53V9Vcbpvq-c&amp;s=10">black cat of the CMS</a>.</p>
       <p class="site-footer__credit">Drawing of the CMS traced from <a href="https://commons.wikimedia.org/wiki/File:CMS_Central_Core_01.jpg">a photograph by Dmitry Tonkonog</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</p>
     </div>
   </footer>
