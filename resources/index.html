@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261118o">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118p">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -47,31 +47,134 @@
   <main id="main">
     <div class="wrap page-head">
       <h1 class="display">Resources</h1>
-      <p class="lede">Where to start reading about theoretical AI safety.</p>
+      <p class="lede">Where to start with theoretical AI safety: research directions, background reading, newsletters, courses, fellowships and organisations.</p>
     </div>
 
     <hr class="rule">
 
-    <!-- Placeholder sections. Replace the text with real links. -->
     <div class="wrap rows">
-      <section class="row">
-        <h2 class="row__head">Getting started</h2>
+      <section class="row" id="directions" aria-labelledby="directions-title">
+        <h2 class="row__head" id="directions-title">Research directions</h2>
         <div class="row__body">
-          <p>Introductory reading for mathematicians and physicists new to AI safety goes here.</p>
+          <p>A sense of which theoretical questions matter most, from two research agendas.</p>
+          <ul class="resource-list">
+            <li><a href="https://maisi.org/research/directions">MAISI research directions</a><span class="resource-list__desc">Important open directions, written for mathematicians.</span></li>
+            <li><a href="https://alignmentproject.aisi.gov.uk/research-agenda">UK AISI Alignment Project research agenda</a><span class="resource-list__desc">A past research agenda from the UK AI Security Institute.</span></li>
+          </ul>
         </div>
       </section>
 
-      <section class="row">
-        <h2 class="row__head">Research agendas</h2>
+      <section class="row" id="background" aria-labelledby="background-title">
+        <h2 class="row__head" id="background-title">Background and prerequisites</h2>
         <div class="row__body">
-          <p>Overviews of the main theoretical research directions go here.</p>
+          <p>Good starting context and reading, and some resources for plugging gaps. All have a very low barrier to entry.</p>
+          <ul class="resource-list">
+            <li><a href="https://iliad-intensive.org/foundations/prerequisites/">Iliad prerequisites</a><span class="resource-list__desc">Adapted from ARENA&rsquo;s list, with a more theoretical focus.</span></li>
+            <li><a href="https://learn.arena.education/chapter0_fundamentals/00_prereqs/1-core-concepts-knowledge/">ARENA prerequisites</a><span class="resource-list__desc">Aimed more at empirical work. Good starting reading, and an idea of the most applicable areas of mathematics.</span></li>
+          </ul>
         </div>
       </section>
 
-      <section class="row">
-        <h2 class="row__head">Talks and slides</h2>
+      <section class="row" id="reading" aria-labelledby="reading-title">
+        <h2 class="row__head" id="reading-title">Further reading</h2>
         <div class="row__body">
-          <p>Slides and recordings from CAT talks will be posted here after each event.</p>
+          <p>Lectures, curricula and introductory papers.</p>
+          <h3 class="resource-group">Lectures and curricula</h3>
+          <ul class="resource-list">
+            <li><a href="https://november-miso.pages.dev/schedule">MISO</a><span class="resource-list__desc">The two-week school on the mathematics of AI safety that WHISKERS follows.</span></li>
+            <li><a href="https://iliad-intensive.org/">Iliad Intensive curriculum</a><span class="resource-list__desc">Course materials from Iliad&rsquo;s intensive on theoretical alignment.</span></li>
+          </ul>
+          <h3 class="resource-group">Introductory papers</h3>
+          <ul class="resource-list">
+            <li><a href="https://lionellevine.github.io/MAIS.pdf">Math for AI Safety: An invitation for mathematicians</a><span class="resource-list__desc">Lionel Levine. Open problems in logic, probability, algebra and analysis, chosen so you can start from the field you already know. Lionel also teaches a <a href="https://lionellevine.github.io/MAIS.html">graduate course</a> on it.</span></li>
+            <li><a href="https://arxiv.org/abs/2209.00626">The Alignment Problem from a Deep Learning Perspective</a><span class="resource-list__desc">Ngo, Chan and Mindermann. Why alignment is hard for systems trained like today&rsquo;s.</span></li>
+            <li><a href="https://arxiv.org/abs/1606.06565">Concrete Problems in AI Safety</a><span class="resource-list__desc">Amodei et al. A classic early overview of practical safety problems.</span></li>
+          </ul>
+          <h3 class="resource-group">Discussion</h3>
+          <ul class="resource-list">
+            <li><a href="https://www.alignmentforum.org/">AI Alignment Forum</a><span class="resource-list__desc">Where much theoretical alignment research is posted and discussed.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="row" id="newsletters" aria-labelledby="newsletters-title">
+        <h2 class="row__head" id="newsletters-title">Newsletters</h2>
+        <div class="row__body">
+          <p>For keeping up with AI progress and AI safety.</p>
+          <ul class="resource-list">
+            <li><a href="https://www.transformernews.ai/">Transformer</a><span class="resource-list__desc">AI policy and safety news.</span></li>
+            <li><a href="https://importai.substack.com/">Import AI</a><span class="resource-list__desc">Jack Clark&rsquo;s weekly round-up of AI research.</span></li>
+            <li><a href="https://newsletter.safe.ai/">AI Safety Newsletter</a><span class="resource-list__desc">From the Center for AI Safety.</span></li>
+            <li><a href="https://thezvi.substack.com/">Zvi Mowshowitz</a><span class="resource-list__desc">Don&rsquo;t Worry About the Vase: long, detailed weekly AI round-ups.</span></li>
+            <li><a href="https://lastweekin.ai/">Last Week in AI</a><span class="resource-list__desc">A weekly summary of AI news.</span></li>
+            <li><a href="https://epoch.ai/gradient-updates">Gradient Updates</a><span class="resource-list__desc">Epoch AI&rsquo;s analysis of trends in AI.</span></li>
+            <li><a href="https://aievaluation.substack.com/">The AI Evaluation Substack</a><span class="resource-list__desc">On evaluating AI systems.</span></li>
+            <li><a href="https://p3humansonai.substack.com/">Humans on AI</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="row" id="pathways" aria-labelledby="pathways-title">
+        <h2 class="row__head" id="pathways-title">Pathways</h2>
+        <div class="row__body">
+          <p>Ways into the field, from introductory courses to research fellowships.</p>
+          <h3 class="resource-group">Maps</h3>
+          <ul class="resource-list">
+            <li><a href="https://aisafety.com/map">AISafety.com field map</a><span class="resource-list__desc">An overview of the organisations and projects in AI safety.</span></li>
+          </ul>
+          <h3 class="resource-group">Introductory courses</h3>
+          <ul class="resource-list">
+            <li><a href="https://bluedot.org/courses/future-of-ai">BlueDot: Future of AI</a></li>
+            <li><a href="https://bluedot.org/courses/agi-strategy">BlueDot: AGI Strategy</a></li>
+            <li><a href="https://bluedot.org/courses/technical-ai-safety">BlueDot: Technical AI Safety</a></li>
+          </ul>
+          <h3 class="resource-group">Introductory technical courses</h3>
+          <ul class="resource-list">
+            <li><a href="https://www.iliad.ac/intensive">Iliad Intensive</a></li>
+            <li><a href="https://www.arena.education/">ARENA</a></li>
+            <li><a href="https://oaisi.org/arbox/">ARBOx</a><span class="resource-list__desc">The Alignment Research Bootcamp Oxford.</span></li>
+          </ul>
+          <h3 class="resource-group">Fellowships: theoretical</h3>
+          <ul class="resource-list">
+            <li><a href="https://www.iliad.ac/fellowship">Iliad Fellowship</a></li>
+            <li><a href="https://www.matsprogram.org/">MATS (Theoretical tracks)</a></li>
+            <li><a href="https://www.pivotal-research.org/">Pivotal (Theoretical tracks)</a></li>
+            <li><a href="https://sparai.org/">SPAR (Theoretical tracks)</a></li>
+          </ul>
+          <h3 class="resource-group">Fellowships: empirical</h3>
+          <ul class="resource-list">
+            <li><a href="https://www.pivotal-research.org/">Pivotal</a></li>
+            <li><a href="https://www.matsprogram.org/">MATS (Empirical tracks)</a></li>
+            <li><a href="https://erafellowship.org/">ERA</a></li>
+            <li><a href="https://sparai.org/">SPAR (Empirical tracks)</a></li>
+            <li><a href="https://princint.ai/">PIBBSS</a><span class="resource-list__desc">Now Principles of Intelligence.</span></li>
+            <li><a href="https://www.lasrlabs.org/">LASR Labs</a></li>
+            <li><a href="https://longtermrisk.org/">Center on Long-Term Risk</a></li>
+            <li><a href="https://lawzero.org/">LawZero</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="row" id="organisations" aria-labelledby="organisations-title">
+        <h2 class="row__head" id="organisations-title">Organisations</h2>
+        <div class="row__body">
+          <p>Groups doing theoretical alignment research.</p>
+          <ul class="resource-list">
+            <li><a href="https://www.alignmentforum.org/posts/AP7YDke5jjY4v3X9Z">Resolution</a><span class="resource-list__desc">Formerly Sequent. Theory and empirics aimed at higher confidence in alignment.</span></li>
+            <li><a href="https://maisi.org/">MAISI</a><span class="resource-list__desc">The Mathematical AI Safety Institute.</span></li>
+            <li><a href="https://www.iliad.ac/">Iliad</a><span class="resource-list__desc">Foundational alignment research, the Iliad Intensive and the Iliad Fellowship.</span></li>
+            <li><a href="https://www.alignment.org/">ARC</a><span class="resource-list__desc">The Alignment Research Center.</span></li>
+            <li><a href="https://www.simplexaisafety.com/">Simplex</a><span class="resource-list__desc">Computational mechanics and the structure of neural network representations.</span></li>
+            <li><a href="https://xorlabs.org/">XOR Labs</a><span class="resource-list__desc">A principled understanding of the capabilities and risks of agentic AI systems.</span></li>
+            <li><a href="https://timaeus.co/">Timaeus</a><span class="resource-list__desc">Singular learning theory and developmental interpretability.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="row" id="talks" aria-labelledby="talks-title">
+        <h2 class="row__head" id="talks-title">Talks and slides</h2>
+        <div class="row__body">
+          <p>Slides and recordings from <a href="/events/">CAT talks</a> will be posted here after each event.</p>
         </div>
       </section>
     </div>

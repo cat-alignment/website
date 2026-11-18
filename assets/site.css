@@ -797,3 +797,40 @@ b {
   height: auto;
   background: var(--ice);
 }
+
+/* Resources */
+
+.resource-group {
+  margin-top: 1.75rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.row__body > .resource-group:first-child {
+  margin-top: 0;
+}
+
+.resource-list {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row__body > p + .resource-list,
+.row__body > p + .resource-group {
+  margin-top: 1.25rem;
+}
+
+.resource-list li + li {
+  margin-top: 0.7rem;
+}
+
+.resource-list a {
+  color: var(--ink);
+}
+
+.resource-list__desc {
+  display: block;
+  font-size: 0.9375rem;
+}
