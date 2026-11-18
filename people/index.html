@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261118i">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118k">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -26,7 +26,14 @@
         <a href="/about/">About</a>
         <a href="/people/" aria-current="page">People</a>
         <div class="nav__item">
-          <a href="/programs/">Programs</a>
+          <a href="/events/">Events</a>
+          <ul class="nav__menu">
+            <li><a href="/events/#moronov">An introduction to theoretical AI safety<span class="nav__menu-meta">Mikhail Moronov · 27 November</span></a></li>
+            <li><a href="/events/#levine">Lionel Levine<span class="nav__menu-meta">Date to be announced</span></a></li>
+          </ul>
+        </div>
+        <div class="nav__item">
+          <a href="/programs/">Programmes</a>
           <ul class="nav__menu">
             <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
           </ul>
@@ -47,7 +54,7 @@
 
     <!-- Photos are square crops, all shown at the same size. -->
     <ul class="wrap people">
-      <li class="person">
+      <li class="person" id="will-lancer">
         <img class="person__photo" src="/assets/will-lancer.jpg" alt="" width="216" height="216">
         <div>
           <h2 class="person__name">Will Lancer</h2>
@@ -55,7 +62,7 @@
           <p class="person__bio">A line about this person goes here.</p>
         </div>
       </li>
-      <li class="person">
+      <li class="person" id="nico-smith">
         <img class="person__photo" src="/assets/nico-smith.jpg" alt="" width="216" height="216">
         <div>
           <h2 class="person__name">Nico Smith</h2>
@@ -63,7 +70,7 @@
           <p class="person__bio">A line about this person goes here.</p>
         </div>
       </li>
-      <li class="person">
+      <li class="person" id="yuv-saxena">
         <img class="person__photo" src="/assets/yuv-saxena.jpg" alt="" width="216" height="216">
         <div>
           <h2 class="person__name">Yuv Saxena</h2>
@@ -71,7 +78,7 @@
           <p class="person__bio">A line about this person goes here.</p>
         </div>
       </li>
-      <li class="person">
+      <li class="person" id="mikhail-moronov">
         <img class="person__photo" src="/assets/mikhail-moronov.jpg" alt="" width="216" height="216">
         <div>
           <h2 class="person__name">Mikhail Moronov</h2>

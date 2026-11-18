@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261118i">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118k">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -26,7 +26,14 @@
         <a href="/about/">About</a>
         <a href="/people/">People</a>
         <div class="nav__item">
-          <a href="/programs/" aria-current="page">Programs</a>
+          <a href="/events/">Events</a>
+          <ul class="nav__menu">
+            <li><a href="/events/#moronov">An introduction to theoretical AI safety<span class="nav__menu-meta">Mikhail Moronov · 27 November</span></a></li>
+            <li><a href="/events/#levine">Lionel Levine<span class="nav__menu-meta">Date to be announced</span></a></li>
+          </ul>
+        </div>
+        <div class="nav__item">
+          <a href="/programs/" aria-current="page">Programmes</a>
           <ul class="nav__menu">
             <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
           </ul>
@@ -42,7 +49,7 @@
       <h1 class="display">WHISKERS</h1>
       <div class="lede">
         <p><b>W</b>inter <b>H</b>ub for <b>I</b>ntensive <b>S</b>tudy of <b>K</b>ey <b>E</b>lements in <b>R</b>igorous <b>S</b>afety.</p>
-        <p>Two weeks at Meridian, Cambridge, from 7 to 19 December 2026.</p>
+        <p>Two weeks at <a href="https://www.meridiancambridge.org/">Meridian</a>, Cambridge, from 7 to 19 December 2026.</p>
       </div>
     </div>
 
@@ -61,16 +68,15 @@
           <p class="row__sub">An in-person introduction to theoretical alignment research, for 
             established students and researchers in mathematics and physics.</p>
           <p>WHISKERS follows the lectures of <a href="https://november-miso.pages.dev/schedule">MISO</a>, 
-            a two-week school on the mathematics of AI safety run by MAISI and Iliad in Berkeley. 
+            a two-week school on the mathematics of AI safety run by <a href="https://maisi.org/">MAISI</a> and <a href="https://www.iliad.ac/">Iliad</a> in Berkeley. 
             We watch the lectures online together, work through problem sets on the material, 
             and discuss it among ourselves.</p>
           <p>Two meals a day are provided, and snacks are unlimited.</p>
-          <p>If you cannot attend the program in-person but would like to
-            attend remotely, or if you require funding to attend the program,
+          <p>If you cannot attend the programme in-person but would like to
+            attend remotely, or if you require funding to attend the programme,
             please contact us at cat.alignment@gmail.com
           </p>
-          <!-- Placeholder: put the application form's URL in this href. -->
-          <p class="actions"><a class="button" href="#apply">Apply to WHISKERS</a></p>
+          <p class="actions"><a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLSfckzTQcC2WZPka3tL3_BqUy3nSMj-ad27EEqhanYNf3HqnGw/viewform?usp=dialog">Apply to WHISKERS</a></p>
         </div>
       </section>
 
@@ -113,9 +119,9 @@
           <h3 class="day__title" id="day-1-title">Orientation and the science of deep learning</h3>
           <p class="day__draws">Draws on probability, linear algebra, optimisation.</p>
           <dl class="sessions mono">
-            <dt>10:00</dt><dd>The alignment problem for mathematicians<span class="sessions__who">Louis Jaburi (Iliad), Jacob Tsimerman (MAISI), Andrew Critch (MAISI)</span></dd>
+            <dt>10:00</dt><dd>The alignment problem for mathematicians<span class="sessions__who">Louis Jaburi (<a href="https://www.iliad.ac/">Iliad</a>), Jacob Tsimerman (<a href="https://maisi.org/">MAISI</a>), Andrew Critch (<a href="https://maisi.org/">MAISI</a>)</span></dd>
             <dt>11:30</dt><dd>How frontier models are trained and aligned<span class="sessions__who">Jan Kirchner (Anthropic)</span></dd>
-            <dt>14:00</dt><dd>The phenomenology of deep learning<span class="sessions__who">Zach Furman (Iliad)</span></dd>
+            <dt>14:00</dt><dd>The phenomenology of deep learning<span class="sessions__who">Zach Furman (<a href="https://www.iliad.ac/">Iliad</a>)</span></dd>
             <dt>15:30</dt><dd>AI timelines<span class="sessions__who">Elliot Glazer (Principia Labs)</span></dd>
           </dl>
         </div>
@@ -148,7 +154,7 @@
             <dt>10:00</dt><dd>Classical learning theory: overparameterisation and double descent<span class="sessions__who">Misha Belkin (UC San Diego)</span></dd>
             <dt>11:30</dt><dd>Singular learning theory I<span class="sessions__who">Daniel Murfet (Resolution)</span></dd>
             <dt>14:00</dt><dd>Singular learning theory II<span class="sessions__who">Daniel Murfet (Resolution)</span></dd>
-            <dt>15:30</dt><dd>Circuits and generalization<span class="sessions__who">Dmitry Vaintrob (Principles of Intelligence)</span></dd>
+            <dt>15:30</dt><dd>Circuits and generalisation<span class="sessions__who">Dmitry Vaintrob (Principles of Intelligence)</span></dd>
           </dl>
         </div>
       </section>
@@ -243,7 +249,7 @@
           <h3 class="day__title" id="day-9-title">Game theory, sequence prediction and data attribution</h3>
           <p class="day__draws">Draws on game theory and logic; combinatorics on words; calculus and influence functions.</p>
           <dl class="sessions mono">
-            <dt>10:00</dt><dd>Open-source game theory<span class="sessions__who">Andrew Critch (MAISI)</span></dd>
+            <dt>10:00</dt><dd>Open-source game theory<span class="sessions__who">Andrew Critch (<a href="https://maisi.org/">MAISI</a>)</span></dd>
             <dt>11:30</dt><dd>Towards computational agent theory<span class="sessions__who">Vanessa Kosoy (CORAL / ALTER)</span></dd>
             <dt>14:00</dt><dd>Data attribution and influence functions<span class="sessions__who">Roger Grosse (Vector Institute and Anthropic)</span></dd>
             <dt>15:30</dt><dd>Discussion: transitioning to AI safety as an academic<span class="sessions__who">Tudor Dimofte (Resolution)</span></dd>
@@ -291,8 +297,7 @@
         <h2 class="row__head" id="apply-title">Apply</h2>
         <div class="row__body">
           <p>WHISKERS is application only. Questions go to <a href="mailto:cat.alignment@gmail.com">cat.alignment@gmail.com</a>.</p>
-          <!-- Placeholder: put the application form's URL in this href. -->
-          <p class="actions"><a class="button" href="#apply">Apply to WHISKERS</a></p>
+          <p class="actions"><a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLSfckzTQcC2WZPka3tL3_BqUy3nSMj-ad27EEqhanYNf3HqnGw/viewform?usp=dialog">Apply to WHISKERS</a></p>
         </div>
       </section>
     </div>

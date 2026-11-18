@@ -55,6 +55,7 @@ main {
 
 h1,
 h2,
+h3,
 p {
   margin: 0;
   font-weight: 400;
@@ -701,4 +702,9 @@ b {
 /* A lede of more than one paragraph. */
 .lede p + p {
   margin-top: 0.75rem;
+}
+
+/* A section label at the very top of a page's rows needs no extra space. */
+.rows > .week-head:first-child {
+  margin-top: 0;
 }
