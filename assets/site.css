@@ -495,7 +495,7 @@ a:hover {
 }
 
 .site-footer__credit {
-  flex-basis: 100%;
+  margin-top: 0.5rem;
 }
 
 /* Narrow screens */
@@ -714,6 +714,7 @@ b {
    over the edge. The cat leads to /meow/, a page of photos of the real one. */
 .site-footer__end {
   display: flex;
+  align-self: flex-end;
   align-items: center;
   gap: 1.25rem;
   margin-left: auto;
