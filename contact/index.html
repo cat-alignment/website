@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261118r">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118s">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -64,6 +64,18 @@
         <h2 class="row__head">In person</h2>
         <div class="row__body">
           <p>Come and say hello at one of our talks at the Centre for Mathematical Sciences. Upcoming talks are on the <a href="/events/">Events page</a>.</p>
+        </div>
+      </section>
+      <section class="row" aria-labelledby="signup-title">
+        <h2 class="row__head" id="signup-title">Mailing list</h2>
+        <div class="row__body">
+          <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/catalignment" method="post">
+            <label class="signup__label" for="signup-email">Hear about upcoming talks and programmes by email.</label>
+            <div class="signup__fields">
+              <input type="email" name="email" id="signup-email" autocomplete="email" placeholder="Your email" required>
+              <button class="button" type="submit">Subscribe</button>
+            </div>
+          </form>
         </div>
       </section>
     </div>

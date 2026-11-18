@@ -591,6 +591,54 @@ a:hover {
   color: var(--white);
 }
 
+/* Mailing list sign-up (Buttondown). On the home page it sits in a thin row
+   between hairlines; on Contact it is an ordinary row. */
+
+.row--thin {
+  padding-block: 1.25rem;
+  border-block: 1px solid var(--hair);
+}
+
+.row--thin .meta {
+  font-weight: 400;
+}
+
+.signup__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.signup input[type="email"] {
+  flex: 1 1 14rem;
+  min-width: 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--hair);
+  border-radius: 0;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+}
+
+.signup input[type="email"]::placeholder {
+  color: var(--ink-soft);
+}
+
+.signup input[type="email"]:focus {
+  border-color: var(--ink);
+}
+
+.signup .button {
+  border: 0;
+  border-radius: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+
 .timetable {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
