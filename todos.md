@@ -2,7 +2,7 @@
 
 - Give Yuv a face
 - About
-- Program
+- Programme
 - Resources
 - Home button
 - Contact us

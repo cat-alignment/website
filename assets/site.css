@@ -208,7 +208,7 @@ a:hover {
   text-underline-offset: 0.25em;
 }
 
-/* Programs opens a small menu of the programs on hover, or when a keyboard
+/* Programmes opens a small menu of the programmes on hover, or when a keyboard
    user tabs into it. A small chevron hints that it opens. */
 .nav__item {
   position: relative;
@@ -569,7 +569,7 @@ a:hover {
   }
 }
 
-/* Programs page */
+/* Programmes page */
 
 .row__body .actions {
   margin-top: 1.75rem;
@@ -627,7 +627,7 @@ a:hover {
   color: var(--ink);
 }
 
-/* Programs list: the program's name is the link. */
+/* Programmes list: the programme's name is the link. */
 .title-link {
   text-decoration: none;
 }
