@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=20261118i">
+  <link rel="stylesheet" href="/assets/site.css?v=20261118n">
   <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
 </head>
 <body>
@@ -26,7 +26,14 @@
         <a href="/about/" aria-current="page">About</a>
         <a href="/people/">People</a>
         <div class="nav__item">
-          <a href="/programs/">Programs</a>
+          <a href="/events/">Events</a>
+          <ul class="nav__menu">
+            <li><a href="/events/#moronov">An introduction to theoretical AI safety<span class="nav__menu-meta">Mikhail Moronov · 27 November</span></a></li>
+            <li><a href="/events/#levine">Lionel Levine<span class="nav__menu-meta">Date to be announced</span></a></li>
+          </ul>
+        </div>
+        <div class="nav__item">
+          <a href="/programs/">Programmes</a>
           <ul class="nav__menu">
             <li><a href="/programs/whiskers/">WHISKERS<span class="nav__menu-meta">7–19 December · Meridian</span></a></li>
           </ul>
@@ -65,15 +72,15 @@
       <section class="row" aria-labelledby="who-title">
         <h2 class="row__head" id="who-title">Who is it for?</h2>
         <div class="row__body">
-          <p>Mathematicians and physicists who are curious about AI safety and want to know where to start. Our <a href="/#talk-title">initial talks</a> will be overviews of the field and the pathways into alignment research, targeted at a general mathematical audience.</p>
-          <p>The <a href="/programs/whiskers/">WHISKERS program</a> is aimed at producing lecturers for a lecture series in Lent and therefore we expect the median participant to be a PhD student, but we encourage anyone interested to attend, from undergrad to faculty!</p>
+          <p>Mathematicians and physicists who are curious about AI safety and want to know where to start. Our <a href="/events/">initial talks</a> will be overviews of the field and the pathways into alignment research, targeted at a general mathematical audience.</p>
+          <p>The <a href="/programs/whiskers/">WHISKERS programme</a> is aimed at producing lecturers for a lecture series in Lent and therefore we expect the median participant to be a PhD student, but we encourage anyone interested to attend, from undergrad to faculty!</p>
         </div>
       </section>
 
       <section class="row" aria-labelledby="now-title">
         <h2 class="row__head" id="now-title">Where are we now?</h2>
         <div class="row__body">
-          <p>Our initial talks are coming up soon, and we are currently accepting applications for the WHISKERS program. CAT is a very new group, and we are trying to grow fast, so if you are interested and want to join us, do <a href="/contact/">get in touch</a>!</p>
+          <p>Our initial talks are coming up soon, and we are currently accepting applications for the WHISKERS programme. CAT is a very new group, and we are trying to grow fast, so if you are interested and want to join us, do <a href="/contact/">get in touch</a>!</p>
         </div>
       </section>
     </div>
@@ -82,7 +89,10 @@
   <footer class="site-footer">
     <div class="wrap site-footer__inner">
       <p><span class="site-footer__name">Cambridge Alignment Theory</span><br>Cambridge, UK</p>
-      <p class="mono">Our mascot is the <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2CVCa9D3Yw6DitdJ8UQ2iGweusYpNW1UFbSg_IdMAsS53V9Vcbpvq-c&amp;s=10">black cat of the CMS</a>.</p>
+      <div class="site-footer__end">
+        <p class="mono">Our mascot is the <a href="/assets/cat/cat-6.jpg">black cat of the CMS</a>.</p>
+        <a class="footer-cat" href="/meow/" aria-label="The black cat of the CMS" title="Meow"><img src="/assets/cat.svg" alt="" width="44" height="100"></a>
+      </div>
     </div>
   </footer>
 </body>
