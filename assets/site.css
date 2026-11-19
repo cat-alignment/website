@@ -561,6 +561,48 @@ a:hover {
   .nav .nav__contact {
     margin-right: 0;
   }
+
+  /* No ice line runs under the logo here, so the cat sits on the letters'
+     own baseline rather than just below it. */
+  .logo {
+    align-items: baseline;
+  }
+
+  /* Dropdowns open as a full-width panel under the header, so a long event
+     title never runs off the screen. They open on a tap (see nav.js). */
+  .site-header__inner {
+    position: relative;
+  }
+
+  .nav__item {
+    position: static;
+  }
+
+  .nav__item::after {
+    display: none;
+  }
+
+  .nav__menu {
+    top: 100%;
+    left: 0;
+    right: 0;
+    min-width: 0;
+  }
+
+  .nav__menu a {
+    white-space: normal;
+  }
+}
+
+.nav__item.is-open > a::after {
+  transform: translateY(-0.05em) rotate(225deg);
+}
+
+.nav__item.is-open .nav__menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
 }
 
 @media (max-width: 22.5rem) {

@@ -277,7 +277,13 @@ CIRCLE_EDGE = [(1300, 962), (1312, 985), (1305, 1010), (1280, 1035), (1240, 1060
                (1160, 1125), (1130, 1165)]
 step_bot_end = (1195, toward(STEP_BOT, VS, 1195))
 
-PLAZA = ([(-10, 828), (150, 852), (300, 826), (420, 800), (480, 801), (530, 800), (600, 794),
+# Pebbles left of the left drum (round the benches there) and in a thin strip
+# along the drum's foot: the same cobbled ground as round the right drum, only
+# in shade in the photo. Bounded by the terrace wall, the drum and the slabs.
+GRAVEL_EDGE = [(300, 826), (420, 812), (480, 814), (530, 813), (600, 808), (646.5, 833)]
+GRAVEL = ([(-10, 782), (365.6, 748), (365.6, 781), (412.5, 796), (480, 801), (530, 800), (600, 794)]
+          + GRAVEL_EDGE[::-1] + [(150, 852), (-10, 828)])
+PLAZA = ([(-10, 828), (150, 852)] + GRAVEL_EDGE[:-1] + [
           (646.5, 833), (701, 845), (761, 857), (831, 868), STEP_TOP, STEP_BOT, step_bot_end]
          + CIRCLE_EDGE[-2:] + [(1150, drain(1150)), s2_end, (-10, toward(S2_TOP, VB, -10)),
                                 (-10, toward(S1_BOT, VB, -10)), s1_end, (-10, drain(-10))])
@@ -355,6 +361,14 @@ for x, top, bot, r in ((298, 888, 968, 10), (1007, 1072, 1185, 12)):
     path(f"M{x - r} {bot}V{top + r}A{r} {r} 0 0 1 {x + r} {top + r}V{bot}A{r} {r * 0.35} 0 0 1 {x - r} {bot}Z", "c", fill=True)
     path(f"M{x - r} {top + r + 6}h{2 * r}M{x - r} {top + r + 11}h{2 * r}", "c")
 out.append("</g>")
+
+# Outside the ground mask, which fades to nothing over here: the pebbles are as
+# plain in front of the left of the building as round the right drum.
+group("ground: pebbles round the benches on the left")
+defs.append('<clipPath id="gravel"><path d="' + pl(GRAVEL, True) + '"/></clipPath>')
+# Opacity and ring spacing match how the right drum's pebbles read through the mask.
+rings = "".join(f'<ellipse class="k" cx="160" cy="806" rx="{r}" ry="{f(r * 0.31)}"/>' for r in range(30, 720, 19))
+out.append(f'<g clip-path="url(#gravel)" opacity="0.6">{rings}</g>')
 
 # ---------------------------------------------------------------- far building (right)
 group("building behind, right")
