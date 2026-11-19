@@ -283,12 +283,17 @@ step_bot_end = (1195, toward(STEP_BOT, VS, 1195))
 GRAVEL_EDGE = [(300, 826), (420, 812), (480, 814), (530, 813), (600, 808), (646.5, 833)]
 GRAVEL = ([(-10, 782), (365.6, 748), (365.6, 781), (412.5, 796), (480, 801), (530, 800), (600, 794)]
           + GRAVEL_EDGE[::-1] + [(150, 852), (-10, 828)])
-PLAZA = ([(-10, 828), (150, 852)] + GRAVEL_EDGE[:-1] + [
-          (646.5, 833), (701, 845), (761, 857), (831, 868), STEP_TOP, STEP_BOT, step_bot_end]
+# The cobble bands run along the whole front of the building, from the right
+# drum out past the left one (on the left they are in shade in the photo, so
+# they are harder to see there, but they carry on). Their near edge runs on
+# towards the frame; behind them is the building and then the pebbles.
+step_left = (-10, toward(STEP_BOT, VS, -10))
+PLAZA = ([step_left, step_bot_end]
          + CIRCLE_EDGE[-2:] + [(1150, drain(1150)), s2_end, (-10, toward(S2_TOP, VB, -10)),
                                 (-10, toward(S1_BOT, VB, -10)), s1_end, (-10, drain(-10))])
-STEPS = ([STEP_TOP, (910, 877), (997, 890), (1107, 892), (1226, 894), (1240, 935)]
-         + CIRCLE_EDGE[:-2] + [STEP_BOT])
+STEPS = ([(-10, 828), (150, 852)] + GRAVEL_EDGE + [(701, 845), (761, 857), (831, 868),
+          STEP_TOP, (910, 877), (997, 890), (1107, 892), (1226, 894), (1240, 935)]
+         + CIRCLE_EDGE[:-2] + [step_left])
 CIRCLE = ([(1226, 894), (1240, 935)] + CIRCLE_EDGE + [(1920, 1165), (1920, 956), (1668, 952), (1668, 894)])
 
 out.append('<g mask="url(#ground)">')
