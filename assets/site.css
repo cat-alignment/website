@@ -1117,3 +1117,14 @@ b {
 .page-head--wide {
   grid-template-columns: minmax(0, 1fr);
 }
+
+/* Resources pages: bullets on link lists. */
+
+.rows--stacked .resource-list {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.rows--stacked .resource-list li::marker {
+  color: var(--ink-soft);
+}
