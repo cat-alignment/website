@@ -1111,3 +1111,9 @@ b {
 .rows--stacked .toggle__hint {
   flex: none;
 }
+
+/* Resources pages: title on one line, date below. */
+
+.page-head--wide {
+  grid-template-columns: minmax(0, 1fr);
+}
