@@ -938,3 +938,142 @@ b {
   display: block;
   font-size: 0.9375rem;
 }
+
+/* Resources pages: collapsible sections. A section's heading sits on the
+   left like any row; "Show" on the right opens it. */
+
+.toggle {
+  border-top: 1px solid var(--hair);
+}
+
+.toggle:last-of-type {
+  border-bottom: 1px solid var(--hair);
+}
+
+.row + .toggle,
+.table-wrap + .row,
+.toggle + .row {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+.toggle__summary {
+  padding-block: 1.25rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.toggle__summary::-webkit-details-marker {
+  display: none;
+}
+
+.toggle__summary .row__head {
+  font-size: 1.25rem;
+}
+
+.toggle__hint {
+  justify-self: start;
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.toggle .when-open,
+.toggle[open] .when-closed {
+  display: none;
+}
+
+.toggle[open] .when-open {
+  display: inline;
+}
+
+.toggle__arrow {
+  display: inline-block;
+  transition: transform 150ms ease-out;
+}
+
+.toggle[open] .toggle__arrow {
+  transform: rotate(180deg);
+}
+
+.toggle__body {
+  padding-bottom: 1.75rem;
+}
+
+.resource-steps {
+  margin: 1.25rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.resource-steps li + li {
+  margin-top: 0.7rem;
+}
+
+.resource-steps + p,
+.resource-list + p {
+  margin-top: 1.25rem;
+}
+
+.row__body .resource-group + .resource-list {
+  margin-top: 0.75rem;
+}
+
+.agenda-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.4rem 1rem;
+  margin: 1rem 0 0;
+}
+
+.agenda-facts dt {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  padding-top: 0.15rem;
+}
+
+.agenda-facts dd {
+  margin: 0;
+}
+
+.agenda-facts + .resource-group {
+  margin-top: 2rem;
+}
+
+/* Organisations table: scrolls sideways on narrow screens. */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.org-table {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.org-table th,
+.org-table td {
+  padding: 0.75rem 1rem 0.75rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--hair);
+}
+
+.org-table th {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.org-table a {
+  color: var(--ink);
+}
+
+.toggle__summary + .toggle__body {
+  margin-top: 0;
+}
+
+.row + .table-wrap {
+  margin-top: 2rem;
+}
