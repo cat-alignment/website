@@ -31,3 +31,14 @@
     if (!e.target.closest(".nav__item")) closeAll(null);
   });
 })();
+
+/* Resources pages: a link to #section opens that collapsed section. */
+(() => {
+  const open = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const el = id && document.getElementById(id);
+    if (el && el.tagName === "DETAILS") { el.open = true; el.scrollIntoView(); }
+  };
+  open();
+  window.addEventListener("hashchange", open);
+})();
