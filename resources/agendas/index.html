@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research agendas · CAT</title>
+  <meta name="description" content="The main theoretical AI safety research agendas, with the maths each uses and who works on them.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist&family=Geist+Mono&display=swap">
+  <link rel="stylesheet" href="/assets/site.css?v=20261122a">
+  <script src="/assets/nav.js?v=2" defer></script>
+  <!-- Moving cat, switched off: <script src="/assets/prowl.js?v=5" defer></script> -->
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="logo" href="/" aria-label="CAT, Cambridge Alignment Theory: home">
+        <span class="logo__word">CAT</span>
+        <span class="logo__cat"><img src="/assets/cat.svg" alt="" width="44" height="100"></span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/people/">People</a>
+        <div class="nav__item">
+          <a href="/events/">Events</a>
+          <ul class="nav__menu">
+            <li><a href="/events/#mironov">An introduction to theoretical AI safety<span class="nav__menu-meta">Mikhail Mironov · 27 November</span></a></li>
+            <li><a href="/events/#levine">Lionel Levine<span class="nav__menu-meta">Date to be announced</span></a></li>
+          </ul>
+        </div>
+        <div class="nav__item">
+          <a href="/programmes/">Programmes</a>
+          <ul class="nav__menu">
+            <li><a href="/programmes/whiskers/">WHISKERS<span class="nav__menu-meta">7–18 December · Cambridge</span></a></li>
+          </ul>
+        </div>
+        <a href="/resources/">Getting started</a>
+        <div class="nav__item">
+          <a href="/resources/agendas/" aria-current="page">More resources</a>
+          <ul class="nav__menu">
+            <li><a href="/resources/agendas/" aria-current="page">Research agendas</a></li>
+            <li><a href="/resources/organisations/">Organisations</a></li>
+            <li><a href="/resources/fellowships/">Fellowships and funding</a></li>
+          </ul>
+        </div>
+        <a class="nav__contact" href="/contact/">Contact us</a>
+      </nav>
+    </div>
+  </header>
+
+    <main id="main">
+    <div class="wrap page-head">
+      <h1 class="display">Research agendas in theoretical AI safety</h1>
+      <p class="lede"><em>Last updated: November 2026.</em></p>
+    </div>
+
+    <hr class="rule">
+
+    <div class="wrap rows">
+      <div class="row"><div></div><div class="row__body">
+      <p>Our non-exhaustive classification of the main theoretical AI safety agendas, with the maths each uses and representative organisations.</p>
+      <p><strong>New agendas.</strong> We think finding new agendas would be really valuable, and we see it as one of the main ways Cambridge mathematicians can contribute.</p>
+      <p><strong>Assumptions.</strong> For every agenda, we think it is worth asking what assumptions it rests on, and how it could fail when those assumptions don&rsquo;t hold in practice. So for each one we note where we think it can fail.</p>
+      </div></div>
+      <details class="toggle" id="game-theory">
+        <summary class="row toggle__summary"><h2 class="row__head">1. Game theory and protocols</h2><span class="toggle__hint more-link"><span class="when-closed">Show</span><span class="when-open">Hide</span> <span class="toggle__arrow" aria-hidden="true">&darr;</span></span></summary>
+        <div class="row toggle__body">
+          <div></div>
+          <div class="row__body">
+            <p>Mostly scalable oversight: treat the model as a bounded adversary, set up a game, and prove that its equilibria have the property we want, such as honesty. Examples: debate, prover–verifier games, and open-source game theory (agents that can read each other&rsquo;s code).</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>the game&rsquo;s assumptions don&rsquo;t hold, or training doesn&rsquo;t find the desired equilibrium.</dd>
+              <dt>Maths</dt><dd>complexity theory, game theory.</dd>
+              <dt>Who</dt><dd><a href="https://resolution.org/">Resolution</a> (debate).</dd>
+            </dl>
+          </div>
+        </div>
+      </details>
+      <details class="toggle" id="learning-theory">
+        <summary class="row toggle__summary"><h2 class="row__head">2. Learning theory</h2><span class="toggle__hint more-link"><span class="when-closed">Show</span><span class="when-open">Hide</span> <span class="toggle__arrow" aria-hidden="true">&darr;</span></span></summary>
+        <div class="row toggle__body">
+          <div></div>
+          <div class="row__body">
+            <h3 class="resource-group">2.1 Top-down</h3>
+            <p>Prove theorems over a whole model class.</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>the proof needs simplifying assumptions that real architectures or learning processes break, or when its quantities can only be estimated.</dd>
+              <dt>Maths</dt><dd>algebraic geometry, Bayesian statistics, statistical physics.</dd>
+              <dt>Who</dt><dd><a href="https://resolution.org/">Resolution</a>, including the singular learning theory agenda of the former <a href="https://timaeus.co/">Timaeus</a> team; <a href="https://princint.ai/piramid/">PIRAMID</a> (Principles of Intelligence).</dd>
+            </dl>
+            <h3 class="resource-group">2.2 Bottom-up</h3>
+            <p>Derive training dynamics in closed form for solvable toy networks, then check real networks match.</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>the phenomenon changes qualitatively at scale.</dd>
+              <dt>Maths</dt><dd>differential equations, random matrix theory, statistical physics.</dd>
+              <dt>Who</dt><dd>mostly academic groups, for example Andrew Saxe (UCL), Daniel Kunin and Jamie Simon (UC Berkeley) (our current understanding; we&rsquo;ll check when we watch their lectures on MISO day 5).</dd>
+            </dl>
+          </div>
+        </div>
+      </details>
+      <details class="toggle" id="agent-foundations">
+        <summary class="row toggle__summary"><h2 class="row__head">3. Agent foundations</h2><span class="toggle__hint more-link"><span class="when-closed">Show</span><span class="when-open">Hide</span> <span class="toggle__arrow" aria-hidden="true">&darr;</span></span></summary>
+        <div class="row toggle__body">
+          <div></div>
+          <div class="row__body">
+            <h3 class="resource-group">3.1 Unbounded agents</h3>
+            <p>Prove things about AIXI-style idealised agents (agents based on Solomonoff induction).</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>systems built from LLMs don&rsquo;t resemble those idealisations.</dd>
+              <dt>Maths</dt><dd>logic, decision theory, algorithmic information theory.</dd>
+              <dt>Who</dt><dd><a href="https://www.aixi.uk/">AIXI Labs</a>.</dd>
+            </dl>
+            <h3 class="resource-group">3.2 Bounded agents</h3>
+            <p>The same, but with computational limits built in (the learning-theoretic agenda, logical induction).</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>the bounds are vacuous at scale, or the chosen limitations aren&rsquo;t the ones that matter.</dd>
+              <dt>Maths</dt><dd>logic, decision theory, probability theory.</dd>
+              <dt>Who</dt><dd><a href="https://coral-research.org/">CORAL</a>, <a href="https://dovetailresearch.org/">Dovetail</a>, <a href="https://resolution.org/">Resolution</a>&rsquo;s agent foundations team, <a href="https://xorlabs.org/">XOR Labs</a>.</dd>
+            </dl>
+          </div>
+        </div>
+      </details>
+      <details class="toggle" id="mechanistic-estimation">
+        <summary class="row toggle__summary"><h2 class="row__head">4. Mechanistic estimation (heuristic arguments)</h2><span class="toggle__hint more-link"><span class="when-closed">Show</span><span class="when-open">Hide</span> <span class="toggle__arrow" aria-hidden="true">&darr;</span></span></summary>
+        <div class="row toggle__body">
+          <div></div>
+          <div class="row__body">
+            <p>Estimate how often a model shows rare but unacceptable behaviour from the model&rsquo;s weights or learning process rather than from samples.</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>[we (CAT) do not know yet].</dd>
+              <dt>Maths</dt><dd>probability theory, complexity theory.</dd>
+              <dt>Who</dt><dd><a href="https://www.alignment.org/">ARC</a>.</dd>
+            </dl>
+          </div>
+        </div>
+      </details>
+      <details class="toggle" id="interpretability">
+        <summary class="row toggle__summary"><h2 class="row__head">5. Interpretability</h2><span class="toggle__hint more-link"><span class="when-closed">Show</span><span class="when-open">Hide</span> <span class="toggle__arrow" aria-hidden="true">&darr;</span></span></summary>
+        <div class="row toggle__body">
+          <div></div>
+          <div class="row__body">
+            <p>Inspect a model&rsquo;s weights and try to interpret them. Mostly empirical, but with some theoretical results.</p>
+            <dl class="agenda-facts">
+              <dt>Fails when</dt><dd>the network&rsquo;s computation doesn&rsquo;t break into human-understandable parts, or explanations cover only a small part of its behaviour.</dd>
+              <dt>Maths</dt><dd>linear algebra, high-dimensional geometry.</dd>
+              <dt>Who</dt><dd><a href="https://www.simplexaisafety.com/">Simplex</a> (theory); <a href="https://www.goodfire.com/">Goodfire</a>, <a href="https://www.anthropic.com/research/team/interpretability">Anthropic</a> and Google DeepMind interpretability teams (empirical).</dd>
+            </dl>
+          </div>
+        </div>
+      </details>
+      <div class="row"><div></div><div class="row__body">
+          <p><a href="https://www.iliad.ac/">Iliad</a> has research teams across nearly all of these agendas: debate, learning theory, agency, heuristic arguments, and the geometry and structure of neural networks, plus data attribution.</p>
+      </div></div>
+      <section class="row" id="other-lists" aria-labelledby="other-lists-title">
+        <h2 class="row__head" id="other-lists-title">Other lists of directions and open problems</h2>
+        <div class="row__body">
+          <p>MAISI describes some of these areas in its <a href="https://maisi.org/research/directions">research directions</a>: roughly open-source game theory (1), mechanistic estimation (4) and interpretability (5) from the list above.</p>
+          <p>For concrete problems, also see <a href="https://lionellevine.github.io/MAIS.pdf">Math for AI Safety: An invitation for mathematicians</a> by Lionel Levine, a survey organised by field, with an open problem at the end of each section. It grew into the <a href="https://github.com/Math-for-AI-Safety/MAIS">MAIS repository</a>, a much longer list of open problems. Our understanding is that this list was largely generated by AI and may not have been fully checked by humans.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <p><span class="site-footer__name">Cambridge Alignment Theory</span><br>Cambridge, UK</p>
+      <div class="site-footer__end">
+        <p class="mono">Our mascot is the <a href="/assets/cat/cat-6.jpg">black cat of the CMS</a>.</p>
+        <a class="footer-cat" href="/meow/" aria-label="The black cat of the CMS" title="Meow"><img src="/assets/cat.svg" alt="" width="44" height="100"></a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
