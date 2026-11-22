@@ -1077,3 +1077,37 @@ b {
 .row + .table-wrap {
   margin-top: 2rem;
 }
+
+/* Small date line under the page title. */
+
+.page-head .page-date {
+  grid-column: 1;
+  margin-top: -0.25rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+/* Resources pages: headings above the text, one wider column. */
+
+.rows--stacked .row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rows--stacked .row > div:empty {
+  display: none;
+}
+
+.rows--stacked .row__body {
+  max-width: none;
+}
+
+.rows--stacked .toggle__summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.rows--stacked .toggle__hint {
+  flex: none;
+}
